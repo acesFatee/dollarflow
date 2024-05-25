@@ -1,6 +1,7 @@
 const express = require("express")
 const app = express();
-const PORT = 5000;
+require('dotenv').config();
+const PORT = process.env.PORT || 5000
 
 app.post('/test-webhook', async (req, res) => {
     console.log(req.body)
