@@ -10,7 +10,6 @@ import QuickAccess from "@/components/QuickAccess";
 import EditModal from "@/components/EditModal";
 import DeleteModal from "@/components/DeleteModal";
 import Drawer from "@/components/Drawer";
-import RecentBudgets from "@/components/RecentBudgets";
 
 import { Inter } from "next/font/google";
 import "./globals.css";
@@ -58,7 +57,7 @@ export default async function RootLayout({ children }) {
   return (
     <ClerkProvider>
       <Provider>
-        <html data-theme="dark" lang="en">
+        <html data-theme="light" lang="en">
           <body className={inter.className}>
             <SignedIn>
               <div className="app grid xl:grid-cols-12 lg:h-screen">

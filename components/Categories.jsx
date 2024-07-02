@@ -1,7 +1,6 @@
 "use client";
 
 import { Context } from "@/Context/Context";
-import Link from "next/link";
 import React, { useContext, useEffect } from "react";
 import Category from "./Category";
 

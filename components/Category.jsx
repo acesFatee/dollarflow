@@ -7,8 +7,8 @@ export default function Category({ index, category }) {
   const [progressValue, setProgressValue] = useState(0);
 
   useEffect(() => {
-    const percent = (category.spent / category.limit) * 100
-    setProgressValue(percent)
+    const percent = (category.spent / category.limit) * 100;
+    setProgressValue(percent);
   }, [transactions, categories]);
 
   const changeProgressColor = () => {
@@ -38,14 +38,17 @@ export default function Category({ index, category }) {
             </h2>
             <div className="icons flex space-x-3">
               <svg
-              onClick={() => setOpenEdit({
-                edit: "category",
-                element: {
-                  _id: category._id,
-                  name: category.name,
-                  limit: category.limit
+                onClick={() =>
+                  setOpenEdit({
+                    edit: "category",
+                    element: {
+                      _id: category._id,
+                      name: category.name,
+                      limit: category.limit,
+                      isExpense: category.isExpense,
+                    },
+                  })
                 }
-              })}
                 class="w-6 h-6 hover:text-purple-500"
                 aria-hidden="true"
                 xmlns="http://www.w3.org/2000/svg"
@@ -87,12 +90,20 @@ export default function Category({ index, category }) {
             </div>
           </div>
 
-          {category.limit && <progress
-            className={`progress ${changeProgressColor()}`}
-            value={progressValue}
-            max="100"
-          ></progress>}
-          {category.limit && <span className="text-xs">{showAmountSpent()}</span>}
+          {category.limit && (
+            <progress
+              className={`progress ${changeProgressColor()}`}
+              value={progressValue}
+              max="100"
+            ></progress>
+          )}
+          {category.limit && (
+            <span className="text-xs">{showAmountSpent()}</span>
+          )}
+
+          {!category?.isExpense && (
+            <span className="text-green-500">+{category?.earned}</span>
+          )}
         </div>
       </div>
     </>

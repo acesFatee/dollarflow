@@ -50,7 +50,7 @@ export default function Funds() {
 
       <div className="top-categories pt-3 text-lg">
         <h2 className="font-bold mb-4">Top Spent Categories</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {topSpentCategories.map((category, index) => (
             <div key={index} className="category-item p-4 rounded-lg">
               <h3 className="font-semibold text-sm md:text-md">{category.name}</h3>

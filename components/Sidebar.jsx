@@ -20,8 +20,6 @@ export default function Sidebar({ serverUser, categoriesData }) {
     setCategories(categoriesData);
   }, [serverUser, categoriesData]);
 
-  console.log(serverUser)
-
   return (
     <>
       <div className={`flex h-screen flex-col justify-between border-base-300 border-e-2 bg-base-100 z-50`}>

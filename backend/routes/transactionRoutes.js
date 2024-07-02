@@ -11,6 +11,7 @@ router.get("/", getUserClerkId, async (req, res) => {
     const limit = 5;
     const skip = (page - 1) * limit;
     const filter = req.query.filter;
+    let categoryName = "";
 
     let query = { user: req.user._id };
 
@@ -24,6 +25,8 @@ router.get("/", getUserClerkId, async (req, res) => {
 
     if (req.query.category !== "null") {
       query.category = req.query.category;
+      const categoryNameResponse = await CategoryModel.findById(req.query.category)
+      categoryName = categoryNameResponse.name
     }
 
     if (req.query.seach !== "") {
@@ -45,6 +48,7 @@ router.get("/", getUserClerkId, async (req, res) => {
       currentPage: page,
       totalPages,
       totalTransactions,
+      categoryName
     });
   } catch (error) {
     console.log(error);
@@ -71,7 +75,7 @@ router.get("/recent", getUserClerkId, async (req, res) => {
 router.post("/create-expense", getUserClerkId, async (req, res) => {
   try {
     const { name, amount, description, category } = req.body;
-    console.log(req.body)
+    console.log(req.body);
     const parsedAmount = Number(amount);
 
     const categoryForExpense = await CategoryModel.findById(category);
@@ -83,7 +87,6 @@ router.post("/create-expense", getUserClerkId, async (req, res) => {
     if (user.funds < parsedAmount) {
       return res.status(400).json({ error: "Insufficient funds" });
     }
-    const totalSpendOnCategory = parsedAmount + categoryForExpense.spent;
 
     const updatedUserFunds = await UserModel.findByIdAndUpdate(
       user._id,
@@ -170,37 +173,55 @@ router.put("/update-income/:id", getUserClerkId, async (req, res) => {
     const parsedAmount = parseFloat(amount);
 
     const incomeToUpdate = await TransactionModel.findById(req.params.id);
-    const categoryToUpdate = await CategoryModel.findById(category);
+    const categoryToUpdate = await CategoryModel.findById(incomeToUpdate.category);
+    const newCategory = await CategoryModel.findById(category);
 
-    if (!incomeToUpdate || !categoryToUpdate) {
+    if (!incomeToUpdate || !categoryToUpdate || !newCategory) {
       return res.status(404).json({ error: "Income or category not found" });
     }
 
     const currentAmount = parseFloat(incomeToUpdate.amount);
     const currentUserFunds = parseFloat(req.user.funds);
     const currentUserEarned = parseFloat(req.user.earned);
-    const currentCategoryEarned = parseFloat(categoryToUpdate.earned);
+    let updatedNewCategory;
+    let updatedPrevCategory;
 
     let updatedUserInfo = {
       funds: currentUserFunds,
       earned: currentUserEarned,
     };
-    let updatedCategoryInfo = {
-      earned: currentCategoryEarned,
-    };
 
-    if (currentAmount > parsedAmount) {
-      updatedUserInfo.funds -= currentAmount - parsedAmount;
-      updatedUserInfo.earned -= updatedUserInfo.earned - parsedAmount;
-      updatedCategoryInfo.earned -= updatedCategoryInfo.earned - parsedAmount;
+    if (incomeToUpdate.category == category) {
+      updatedNewCategory = await CategoryModel.findByIdAndUpdate(category, {
+        $inc: {
+          earned: parsedAmount - currentAmount,
+        },
+      }, {new: true});
+      updatedPrevCategory = null;
     } else {
-      updatedUserInfo.funds += parsedAmount - currentAmount;
-      updatedUserInfo.earned += parsedAmount - updatedUserInfo.earned;
-      updatedCategoryInfo.earned += parsedAmount - updatedCategoryInfo.earned;
+      // Decrement the earned amount from the previous category
+      updatedPrevCategory = await CategoryModel.findByIdAndUpdate(incomeToUpdate.category, {
+        $inc: {
+          earned: -currentAmount,
+        },
+      }, {new: true});
+
+      // Increment the earned amount for the new category
+      updatedNewCategory = await CategoryModel.findByIdAndUpdate(category, {
+        $inc: {
+          earned: parsedAmount,
+        },
+      }, {new: true});
     }
 
-    console.log(updatedUserInfo);
-    console.log(updatedCategoryInfo);
+    // Update user funds and earned
+    if (currentAmount > parsedAmount) {
+      updatedUserInfo.funds -= currentAmount - parsedAmount;
+      updatedUserInfo.earned -= currentAmount - parsedAmount;
+    } else {
+      updatedUserInfo.funds += parsedAmount - currentAmount;
+      updatedUserInfo.earned += parsedAmount - currentAmount;
+    }
 
     const updatedUser = await UserModel.findByIdAndUpdate(
       req.user._id,
@@ -211,16 +232,6 @@ router.put("/update-income/:id", getUserClerkId, async (req, res) => {
         earned: Number.isFinite(updatedUserInfo.earned)
           ? updatedUserInfo.earned
           : currentUserEarned,
-      },
-      { new: true }
-    );
-
-    const updatedCategory = await CategoryModel.findByIdAndUpdate(
-      category,
-      {
-        earned: Number.isFinite(updatedCategoryInfo.earned)
-          ? updatedCategoryInfo.earned
-          : currentCategoryEarned,
       },
       { new: true }
     );
@@ -239,7 +250,8 @@ router.put("/update-income/:id", getUserClerkId, async (req, res) => {
     return res.status(200).json({
       newIncome,
       updatedUser,
-      updatedCategory,
+      updatedPrevCategory,
+      updatedNewCategory,
     });
   } catch (error) {
     console.log(error);
@@ -247,39 +259,62 @@ router.put("/update-income/:id", getUserClerkId, async (req, res) => {
   }
 });
 
+
 router.put("/update-expense/:id", getUserClerkId, async (req, res) => {
   try {
     const { name, amount, description, category } = req.body;
     const parsedAmount = parseFloat(amount);
 
     const expenseToUpdate = await TransactionModel.findById(req.params.id);
-    const categoryToUpdate = await CategoryModel.findById(category);
+    const categoryToUpdate = await CategoryModel.findById(expenseToUpdate.category);
+    const newCategory = await CategoryModel.findById(category);
 
-    if (!expenseToUpdate || !categoryToUpdate) {
+    if (!expenseToUpdate || !categoryToUpdate || !newCategory) {
       return res.status(404).json({ error: "Expense or category not found" });
     }
 
     const currentAmount = parseFloat(expenseToUpdate.amount);
     const currentUserFunds = parseFloat(req.user.funds);
     const currentUserSpent = parseFloat(req.user.spent);
-    const currentCategorySpent = parseFloat(categoryToUpdate.spent);
+    let updatedNewCategory;
+    let updatedPrevCategory;
 
     let updatedUserInfo = {
       funds: currentUserFunds,
       spent: currentUserSpent,
     };
-    let updatedCategoryInfo = {
-      spent: currentCategorySpent,
-    };
+    
 
+    if (expenseToUpdate.category == category) {
+      updatedNewCategory = await CategoryModel.findByIdAndUpdate(category, {
+        $inc: {
+          spent: parsedAmount - currentAmount,
+        },
+      }, {new: true});
+      updatedPrevCategory = null;
+    } else {
+      // Decrement the spent amount from the previous category
+      updatedPrevCategory = await CategoryModel.findByIdAndUpdate(expenseToUpdate.category, {
+        $inc: {
+          spent: -currentAmount,
+        },
+      }, {new: true});
+
+      // Increment the spent amount for the new category
+      updatedNewCategory = await CategoryModel.findByIdAndUpdate(category, {
+        $inc: {
+          spent: parsedAmount,
+        },
+      }, {new: true});
+    }
+
+    // Update user funds and spent
     if (currentAmount > parsedAmount) {
       updatedUserInfo.funds += currentAmount - parsedAmount;
-      updatedUserInfo.spent -= currentAmount - parsedAmount
-      updatedCategoryInfo.spent -= updatedCategoryInfo.spent - parsedAmount;
+      updatedUserInfo.spent -= currentAmount - parsedAmount;
     } else {
       updatedUserInfo.funds -= parsedAmount - currentAmount;
-      updatedUserInfo.spent += parsedAmount - categoryToUpdate.spent;
-      updatedCategoryInfo.spent += parsedAmount - updatedCategoryInfo.spent;
+      updatedUserInfo.spent += parsedAmount - currentAmount;
     }
 
     const updatedUser = await UserModel.findByIdAndUpdate(
@@ -291,16 +326,6 @@ router.put("/update-expense/:id", getUserClerkId, async (req, res) => {
         spent: Number.isFinite(updatedUserInfo.spent)
           ? updatedUserInfo.spent
           : currentUserSpent,
-      },
-      { new: true }
-    );
-
-    const updatedCategory = await CategoryModel.findByIdAndUpdate(
-      category,
-      {
-        spent: Number.isFinite(updatedCategoryInfo.spent)
-          ? updatedCategoryInfo.spent
-          : currentCategorySpent,
       },
       { new: true }
     );
@@ -319,13 +344,15 @@ router.put("/update-expense/:id", getUserClerkId, async (req, res) => {
     return res.status(200).json({
       newExpense,
       updatedUser,
-      updatedCategory,
+      updatedPrevCategory,
+      updatedNewCategory
     });
   } catch (error) {
     console.log(error);
     return res.status(500).json({ error: "Internal Server Error" });
   }
 });
+
 
 router.delete("/delete-expense/:id", getUserClerkId, async (req, res) => {
   try {
@@ -355,9 +382,6 @@ router.delete("/delete-expense/:id", getUserClerkId, async (req, res) => {
     updatedUserInfo.spent -= parsedAmount;
     updatedCategoryInfo.spent -= parsedAmount;
 
-    console.log(updatedUserInfo);
-    console.log(updatedCategoryInfo);
-
     const updatedUser = await UserModel.findByIdAndUpdate(
       req.user._id,
       {
@@ -381,7 +405,7 @@ router.delete("/delete-expense/:id", getUserClerkId, async (req, res) => {
       { new: true }
     );
 
-    await TransactionModel.findByIdAndDelete(req.params.id)
+    await TransactionModel.findByIdAndDelete(req.params.id);
 
     return res.status(200).json({
       newExpense: expenseToDelete,
@@ -448,7 +472,7 @@ router.delete("/delete-income/:id", getUserClerkId, async (req, res) => {
       { new: true }
     );
 
-    await TransactionModel.findByIdAndDelete(req.params.id)
+    await TransactionModel.findByIdAndDelete(req.params.id);
 
     return res.status(200).json({
       newIncome: incomeToDelete,

@@ -21,10 +21,10 @@ export default function Drawer({ serverUser, categoriesData, children }) {
           {/* Button to open the drawer */}
           <label
             htmlFor="my-drawer"
-            className="drawer-button xl:hidden fixed bottom-4 left-4"
+            className="drawer-button xl:hidden fixed bottom-4 left-4 p-3 bg-purple-300 hover:bg-purple-400 rounded-3xl cursor-pointer"
           >
             <svg
-              className={`w-10 h-10 ${theme === 'dark' ? "text-white" : "text-black"}`}
+              className={`w-6 h-6 text-black`}
               aria-hidden="true"
               xmlns="http://www.w3.org/2000/svg"
               width="24"

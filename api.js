@@ -196,7 +196,7 @@ export const getCategories = async (page, query) => {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
-    });
+    }, {cache: "no-store"});
     const data = await response.json();
     return data;
   } catch (error) {

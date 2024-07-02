@@ -1,6 +1,5 @@
 import { getTransactions } from "@/api";
 import SearchTransactions from "@/components/SearchTransactions";
-import TransactionFilter from "@/components/TransactionFilter";
 import TransactionPagination from "@/components/TransactionPagination";
 import Transactions from "@/components/Transactions";
 import React from "react";
@@ -8,7 +7,7 @@ import React from "react";
 export default async function page({params}) {
   
   const response = await getTransactions(1, "", null, params.id);
-  let heading = response.transactions[0]?.category?.name
+  let heading = response.categoryName
   const transactions = response.transactions;
   const totalPages = response.totalPages
 

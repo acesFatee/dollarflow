@@ -17,7 +17,7 @@ const Provider = ({ children }) => {
   const [categoriesDropdown, setCategoriesDropdown] = useState([])
   const [categories, setCategories] = useState([])
   const [categorySearch, setCategorySearch] = useState("")
-  const [theme, setTheme] = useState("dark")
+  const [theme, setTheme] = useState("light")
   
   useEffect(() => {
     if(theme === "dark"){

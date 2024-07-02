@@ -2,7 +2,6 @@
 
 import { Context } from "@/Context/Context";
 import { updateCategory, updateExpense, updateIncome } from "@/api";
-import { useRouter } from "next/navigation";
 import React, { useContext, useEffect, useState } from "react";
 
 export default function EditModal() {
@@ -92,9 +91,15 @@ export default function EditModal() {
         });
 
         setCategories(() => {
-          const newCategories = categories?.map((c) =>
-            c._id == response.updatedCategory ? response.updatedCategory : c
-          );
+          const newCategories = categories?.map((c) => {
+            if (c._id == response.updatedPrevCategory?._id) {
+              return response.updatedPrevCategory;
+            } else if (c._id == response.updatedNewCategory?._id) {
+              return response.updatedNewCategory;
+            } else {
+              return c;
+            }
+          });
           return newCategories;
         });
       }
@@ -172,14 +177,29 @@ export default function EditModal() {
               >
                 Category
               </label>
-              <input
-                type="text"
+              <select
                 name="category"
                 id="category"
-                value={categoryName}
-                onChange={(e) => setCategoryName(e.target.value)}
-                className="input input-bordered w-full mt-1 border-purple-300 focus:border-purple-600"
-              />
+                value={expense?.category?._id}
+                onChange={(e) =>
+                  setIncome((prev) => ({ ...prev, category: e.target.value }))
+                }
+                className="select select-bordered w-full mt-1 border-purple-300 focus:border-purple-600"
+              >
+                <option value={openEdit?.element?.category?._id}>
+                  {openEdit?.element?.category?.name}
+                </option>
+                {categories
+                  ?.filter(
+                    (c) =>
+                      !c.isExpense && c._id != openEdit?.element?.category?._id
+                  )
+                  ?.map((category) => (
+                    <option key={category._id} value={category._id}>
+                      {category?.name}
+                    </option>
+                  ))}
+              </select>
             </div>
           </div>
           <div>
@@ -234,24 +254,26 @@ export default function EditModal() {
               className="input input-bordered w-full mt-1 border-purple-300 focus:border-purple-600"
               required
             />
-            <div>
-              <label
-                htmlFor="limit"
-                className="block mt-3 text-sm font-medium "
-              >
-                Spend Limit
-              </label>
-              <input
-                type="number"
-                name="limit"
-                id="limit"
-                value={category.limit}
-                onChange={(e) =>
-                  setCategory((prev) => ({ ...prev, limit: e.target.value }))
-                }
-                className="input input-bordered w-full mt-1 border-purple-300 focus:border-purple-600"
-              />
-            </div>
+            {openEdit?.element?.isExpense && (
+              <div>
+                <label
+                  htmlFor="limit"
+                  className="block mt-3 text-sm font-medium "
+                >
+                  Spend Limit
+                </label>
+                <input
+                  type="number"
+                  name="limit"
+                  id="limit"
+                  value={category.limit}
+                  onChange={(e) =>
+                    setCategory((prev) => ({ ...prev, limit: e.target.value }))
+                  }
+                  className="input input-bordered w-full mt-1 border-purple-300 focus:border-purple-600"
+                />
+              </div>
+            )}
           </div>
           <div>
             <button
@@ -292,9 +314,15 @@ export default function EditModal() {
         });
 
         setCategories(() => {
-          const newCategories = categories?.map((c) =>
-            c._id == response.updatedCategory._id ? response.updatedCategory : c
-          );
+          const newCategories = categories?.map((c) => {
+            if (c._id == response.updatedPrevCategory?._id) {
+              return response.updatedPrevCategory;
+            } else if (c._id == response.updatedNewCategory?._id) {
+              return response.updatedNewCategory;
+            } else {
+              return c;
+            }
+          });
           return newCategories;
         });
       }
@@ -372,14 +400,29 @@ export default function EditModal() {
               >
                 Category
               </label>
-              <input
-                type="text"
+              <select
                 name="category"
                 id="category"
-                value={categoryName}
-                onChange={(e) => setCategoryName(e.target.value)}
-                className="input input-bordered w-full mt-1 border-purple-300 focus:border-purple-600"
-              />
+                value={expense?.category?._id}
+                onChange={(e) =>
+                  setExpense((prev) => ({ ...prev, category: e.target.value }))
+                }
+                className="select select-bordered w-full mt-1 border-purple-300 focus:border-purple-600"
+              >
+                <option value={openEdit?.element?.category?._id}>
+                  {openEdit?.element?.category?.name}
+                </option>
+                {categories
+                  ?.filter(
+                    (c) =>
+                      c.isExpense && c._id != openEdit?.element?.category?._id
+                  )
+                  ?.map((category) => (
+                    <option key={category._id} value={category._id}>
+                      {category?.name}
+                    </option>
+                  ))}
+              </select>
             </div>
           </div>
           <div>

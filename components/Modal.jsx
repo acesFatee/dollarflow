@@ -241,7 +241,7 @@ export default function Modal() {
             </label>
             <select
               className="select select-bordered w-full mt-2"
-              value={categoryInput} // Ensure you have a state variable to control the selected value
+              value={categoryInput}
               onChange={(e) => {
                 setCategoryInput(e.target.value);
               }}
