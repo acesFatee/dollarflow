@@ -18,6 +18,8 @@ const Provider = ({ children }) => {
   const [categories, setCategories] = useState([])
   const [categorySearch, setCategorySearch] = useState("")
   const [theme, setTheme] = useState("light")
+  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+  const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
   
   useEffect(() => {
     if(theme === "dark"){
@@ -47,7 +49,9 @@ const Provider = ({ children }) => {
         categorySearch, setCategorySearch,
         openEdit, setOpenEdit,
         openDelete, setOpenDelete,
-        theme, setTheme
+        theme, setTheme,
+        selectedYear, setSelectedYear,
+        selectedMonth, setSelectedMonth
       }}
     >
       {children}

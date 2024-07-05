@@ -81,7 +81,7 @@ export default function EditModal() {
         setUser((prev) => ({
           ...prev,
           funds: response.updatedUser.funds,
-          earned: response.updatedUser.earned,
+          history: response.updatedUser.history,
         }));
         setRecentTransactions(() => {
           const newTransactions = recentTransactions?.map((t) =>
@@ -303,7 +303,7 @@ export default function EditModal() {
         setUser((prev) => ({
           ...prev,
           funds: response.updatedUser.funds,
-          spent: response.updatedUser.spent,
+          history: response.updatedUser.history,
         }));
 
         setRecentTransactions(() => {

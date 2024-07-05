@@ -38,12 +38,12 @@ export default function Funds() {
 
         <div className="total-earned text-center md:text-left">
           <h2 className="font-semibold text-sm md:text-md">Earned</h2>
-          <p className="text-lg text-blue-500">${user?.earned}</p>
+          <p className="text-lg text-blue-500">${user?.history[user?.history?.length - 1]?.earned}</p>
         </div>
 
         <div className="total-spent text-center md:text-left">
           <h2 className="font-semibold text-sm md:text-md">Spent</h2>
-          <p className="text-lg text-red-500">${user?.spent}</p>
+          <p className="text-lg text-red-500">${user?.history[user?.history?.length - 1]?.spent}</p>
         </div>
       </div>
       <hr className="my-3 border-base-300" />
@@ -54,8 +54,8 @@ export default function Funds() {
           {topSpentCategories.map((category, index) => (
             <div key={index} className="category-item p-4 rounded-lg">
               <h3 className="font-semibold text-sm md:text-md">{category.name}</h3>
-              <p className={`text-lg ${percentSpentOnCategory(category.spent, category.limit)}`}>
-                {category.spent}/{category.limit}
+              <p className={`text-lg ${percentSpentOnCategory(category.history[category.history.length - 1].spent, category.limit)}`}>
+                {category.history[category.history.length - 1].spent}/{category.limit}
               </p>
             </div>
           ))}

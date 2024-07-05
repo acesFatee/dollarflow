@@ -12,6 +12,7 @@ router.get("/", getUserClerkId, async (req, res) => {
     const skip = (page - 1) * limit;
 
     let query = {}
+    query.user = req.user._id
     if(req.query.search !== "null"){
       const regex = new RegExp(req.query.search, 'i')
       query.name = regex;
@@ -39,13 +40,20 @@ router.get("/", getUserClerkId, async (req, res) => {
 
 router.post("/create-category", getUserClerkId, async (req, res) => {
   try {
+    const currentYear = new Date().getFullYear();
+    const currentMonth = new Date().getMonth() + 1;
     const { name, limit, isExpense} = req.body;
     const newCategory = await CategoryModel.create({
       name,
       user: req.user._id,
       isExpense,
       limit,
-      spent: 0,
+      history: {
+        year: currentYear,
+        month: currentMonth,
+        spent: 0,
+        earned: 0
+      }
     })
     return res.status(201).json({ newCategory });
   } catch (error) {

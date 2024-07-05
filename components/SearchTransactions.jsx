@@ -4,7 +4,7 @@ import { Context } from "@/Context/Context";
 import { getTransactions } from "@/api";
 import React, { useContext } from "react";
 
-export default function SearchTransactions({category}) {
+export default function SearchTransactions({ category }) {
   const {
     transactionSearch,
     setTransactionSearch,
@@ -12,22 +12,38 @@ export default function SearchTransactions({category}) {
     setTransactions,
     setTransactionPage,
     settransactionTotalPages,
+    selectedYear,
+    selectedMonth,
   } = useContext(Context);
 
   const handleSearch = async (e) => {
     const query = e.target.value;
     setTransactionSearch(query);
     if (query.length < 1) {
-      const response = await getTransactions(1, "", transactionFilter, category ? category : null);
+      const response = await getTransactions(
+        1,
+        "",
+        transactionFilter,
+        category ? category : null,
+        selectedYear,
+        selectedMonth
+      );
       settransactionTotalPages(response.totalPages);
       setTransactions(response.transactions);
-      setTransactionPage(1)
+      setTransactionPage(1);
       return;
     }
-    const response = await getTransactions(1, query, transactionFilter, category ? category : null);
+    const response = await getTransactions(
+      1,
+      query,
+      transactionFilter,
+      category ? category : null,
+      selectedYear,
+      selectedMonth
+    );
     settransactionTotalPages(response.totalPages);
     setTransactions(response.transactions);
-    setTransactionPage(1)
+    setTransactionPage(1);
   };
 
   return (

@@ -12,7 +12,7 @@ export default function SpendHistory() {
     datasets: [
       {
         label: "Spent",
-        data: categories?.filter(e => e.isExpense)?.map(c => c.spent),
+        data: categories?.filter(e => e.isExpense)?.map(c => c.history[c.history.length - 1].spent),
         backgroundColor: ["#36A2EB", "#FF6384", "#FFCE56", "#4BC0C0", "#9966FF"],
         borderColor: ["#36A2EB", "#FF6384", "#FFCE56", "#4BC0C0", "#9966FF"],
         borderWidth: 1

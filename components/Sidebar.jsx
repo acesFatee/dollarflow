@@ -105,8 +105,8 @@ export default function Sidebar({ serverUser, categoriesData }) {
 
             <div>
               <p className="text-xs">
-                <strong className="block font-medium">{serverUser.firstName}</strong>
-                <span>{serverUser.email}</span>
+                <strong className="block font-medium">{serverUser?.firstName}</strong>
+                <span>{serverUser?.email}</span>
               </p>
             </div>
           </a>

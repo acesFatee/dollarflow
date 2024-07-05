@@ -2,8 +2,6 @@ const express = require("express");
 const verifySignupWebhook = require("../middlewares/verifySignupWebhook");
 const router = express.Router();
 const UserModel = require("../models/UserModel");
-const verifyLoginWebhook = require("../middlewares/verifyLoginWebhook");
-const { sign } = require("jsonwebtoken");
 const { ClerkExpressRequireAuth } = require("@clerk/clerk-sdk-node");
 const getUserClerkId = require("../middlewares/getUserClerkId");
 
@@ -18,7 +16,14 @@ router.post("/create-user", verifySignupWebhook, async (req, res) => {
       image: data.image_url,
       email: data?.email_addresses[0]?.email_address,
       funds: 0,
-      currency: "USD",
+      history: [
+        {
+          year: new Date().getFullYear(),
+          month: new Date().getMonth() + 1,
+          spent: 0, 
+          earned: 0
+        }
+      ]
     });
 
     await newUser.save();
@@ -28,13 +33,6 @@ router.post("/create-user", verifySignupWebhook, async (req, res) => {
     console.log(error);
     return res.status(500).json({ error: "Internal Server Error" });
   }
-});
-
-router.post("/login", verifyLoginWebhook, async (req, res) => {
-  const { data } = req.body;
-  console.log(data);
-  const token = sign(data, process.env.JWT_SECRET);
-  return res.status(200).json({ token });
 });
 
 router.put("/update-user/:id", async (req, res) => {
@@ -69,7 +67,6 @@ router.get(
   getUserClerkId,
   async (req, res) => {
     try {
-      console.log(req.user)
       return res.status(200).json({ user: req.user });
     } catch (error) {
       console.log(error);

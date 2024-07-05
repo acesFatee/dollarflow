@@ -204,12 +204,12 @@ export const getCategories = async (page, query) => {
   }
 };
 
-export const getTransactions = async (page, search, filter, category) => {
+export const getTransactions = async (page, search, filter, category, year, month) => {
   const { getToken } = auth();
   try {
     const token = await getToken();
     const response = await fetch(
-      `http://localhost:5000/api/transactions?page=${page}&search=${search}&filter=${filter}&category=${category}`,
+      `http://localhost:5000/api/transactions?page=${page}&search=${search}&filter=${filter}&category=${category}&year=${year}&month=${month}`,
       {
         method: "GET",
         headers: {

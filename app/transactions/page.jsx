@@ -6,7 +6,9 @@ import Transactions from "@/components/Transactions";
 import React from "react";
 
 export default async function Page() {
-  const response = await getTransactions(1, "", null, null);
+  const currentYear = new Date().getFullYear();
+  const currentMonth = new Date().getMonth() + 1;
+  const response = await getTransactions(1, "", null, null, currentYear, currentMonth);
   const transactions = response.transactions;
   const totalPages = response.totalPages
 

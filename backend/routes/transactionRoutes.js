@@ -11,6 +11,8 @@ router.get("/", getUserClerkId, async (req, res) => {
     const limit = 5;
     const skip = (page - 1) * limit;
     const filter = req.query.filter;
+    const year = parseInt(req.query.year) || new Date().getFullYear();
+    const month = parseInt(req.query.month) || new Date().getMonth() + 1;
     let categoryName = "";
 
     let query = { user: req.user._id };
@@ -25,14 +27,21 @@ router.get("/", getUserClerkId, async (req, res) => {
 
     if (req.query.category !== "null") {
       query.category = req.query.category;
-      const categoryNameResponse = await CategoryModel.findById(req.query.category)
-      categoryName = categoryNameResponse.name
+      const categoryNameResponse = await CategoryModel.findById(
+        req.query.category
+      );
+      categoryName = categoryNameResponse.name;
     }
 
-    if (req.query.seach !== "") {
+    if (req.query.search !== "") {
       const regexp = new RegExp(req.query.search, "i");
       query.name = regexp;
     }
+
+    // Adding date range filter
+    const startDate = new Date(year, month - 1, 1);
+    const endDate = new Date(year, month, 0, 23, 59, 59, 999);
+    query.createdAt = { $gte: startDate, $lte: endDate };
 
     const transactions = await TransactionModel.find(query)
       .limit(limit)
@@ -48,7 +57,7 @@ router.get("/", getUserClerkId, async (req, res) => {
       currentPage: page,
       totalPages,
       totalTransactions,
-      categoryName
+      categoryName,
     });
   } catch (error) {
     console.log(error);
@@ -75,8 +84,10 @@ router.get("/recent", getUserClerkId, async (req, res) => {
 router.post("/create-expense", getUserClerkId, async (req, res) => {
   try {
     const { name, amount, description, category } = req.body;
-    console.log(req.body);
     const parsedAmount = Number(amount);
+
+    const currentYear = new Date().getFullYear();
+    const currentMonth = new Date().getMonth() + 1;
 
     const categoryForExpense = await CategoryModel.findById(category);
     if (!categoryForExpense) {
@@ -88,19 +99,79 @@ router.post("/create-expense", getUserClerkId, async (req, res) => {
       return res.status(400).json({ error: "Insufficient funds" });
     }
 
-    const updatedUserFunds = await UserModel.findByIdAndUpdate(
-      user._id,
-      {
-        $inc: { spent: parsedAmount, funds: -parsedAmount },
-      },
-      { new: true }
-    );
+    let updatedUserFunds;
 
-    const updatedCategoryAmount = await CategoryModel.findByIdAndUpdate(
-      category,
-      { $inc: { spent: amount } },
-      { new: true }
-    );
+    const userToUpdate = await UserModel.findOne({
+      _id: user._id,
+      "history.year": currentYear,
+      "history.month": currentMonth,
+    });
+
+    if (userToUpdate) {
+      updatedUserFunds = await UserModel.findOneAndUpdate(
+        {
+          _id: user._id,
+          "history.year": currentYear,
+          "history.month": currentMonth,
+        },
+        {
+          $inc: { "history.$.spent": parsedAmount, funds: -parsedAmount },
+        },
+        { new: true }
+      );
+    } else {
+      const newHistoryEntry = {
+        spent: parsedAmount,
+        earned: 0,
+        month: currentMonth,
+        year: currentYear,
+      };
+      updatedUserFunds = await UserModel.findByIdAndUpdate(
+        user._id,
+        {
+          $push: { history: newHistoryEntry },
+        },
+        { new: true }
+      );
+    }
+
+    let updatedCategoryAmount;
+
+    // Check if there is an existing history entry for the current month and year
+    const categoryToUpdate = await CategoryModel.findOne({
+      _id: category,
+      "history.year": currentYear,
+      "history.month": currentMonth,
+      user: req.user._id,
+    });
+
+    if (categoryToUpdate) {
+      // Update the existing history entry
+      updatedCategoryAmount = await CategoryModel.findOneAndUpdate(
+        {
+          _id: category,
+          "history.year": currentYear,
+          "history.month": currentMonth,
+        },
+        { $inc: { "history.$.spent": parsedAmount } },
+        { new: true }
+      );
+    } else {
+      // Add a new history entry
+      const newHistoryEntry = {
+        spent: parsedAmount,
+        earned: 0,
+        month: currentMonth,
+        year: currentYear,
+      };
+      updatedCategoryAmount = await CategoryModel.findByIdAndUpdate(
+        category,
+        {
+          $push: { history: newHistoryEntry },
+        },
+        { new: true }
+      );
+    }
 
     const newExpenseObject = await TransactionModel.create({
       name,
@@ -129,30 +200,94 @@ router.post("/create-expense", getUserClerkId, async (req, res) => {
 router.post("/add-income", getUserClerkId, async (req, res) => {
   try {
     const { name, amount, category, description } = req.body;
+    const parsedAmount = Number(amount);
 
-    const updatedUser = await UserModel.findByIdAndUpdate(
-      req.user._id,
-      {
-        $inc: {
-          funds: amount,
-          earned: amount,
+    const currentYear = new Date().getFullYear();
+    const currentMonth = new Date().getMonth() + 1;
+
+    let updatedUser;
+
+    const userToUpdate = await UserModel.findOne({
+      _id: req.user._id,
+      "history.year": currentYear,
+      "history.month": currentMonth,
+    });
+
+    if (userToUpdate) {
+      updatedUser = await UserModel.findOneAndUpdate(
+        {
+          _id: req.user._id,
+          "history.year": currentYear,
+          "history.month": currentMonth,
         },
-      },
-      { new: true }
-    );
+        {
+          $inc: {
+            funds: parsedAmount,
+            "history.$.earned": parsedAmount,
+          },
+        },
+        { new: true }
+      );
+    } else {
+      const newHistoryEntry = {
+        spent: parsedAmount,
+        earned: 0,
+        month: currentMonth,
+        year: currentYear,
+      };
+      updatedUser = await UserModel.findByIdAndUpdate(
+        user._id,
+        {
+          $push: { history: newHistoryEntry },
+        },
+        { new: true }
+      );
+    }
 
-    const updatedCategory = await CategoryModel.findByIdAndUpdate(
-      category,
-      { $inc: { earned: amount } },
-      { new: true }
-    );
+    // Check if there is an existing history entry for the current month and year
+    const categoryToUpdate = await CategoryModel.findOne({
+      _id: category,
+      "history.year": currentYear,
+      "history.month": currentMonth,
+      user: req.user._id,
+    });
+
+    let updatedCategory;
+
+    if (categoryToUpdate) {
+      // Update the existing history entry
+      updatedCategory = await CategoryModel.findOneAndUpdate(
+        {
+          _id: category,
+          "history.year": currentYear,
+          "history.month": currentMonth,
+        },
+        { $inc: { "history.$.earned": parsedAmount } },
+        { new: true }
+      );
+    } else {
+      // Add a new history entry
+      const newHistoryEntry = {
+        spent: 0,
+        earned: parsedAmount,
+        month: currentMonth,
+        year: currentYear,
+      };
+      updatedCategory = await CategoryModel.findByIdAndUpdate(
+        category,
+        {
+          $push: { history: newHistoryEntry },
+        },
+        { new: true }
+      );
+    }
 
     const newIncomeObject = await TransactionModel.create({
       name,
       description,
       category,
       isIncome: true,
-      amount,
+      amount: parsedAmount,
       user: req.user._id,
     });
 
@@ -173,16 +308,25 @@ router.put("/update-income/:id", getUserClerkId, async (req, res) => {
     const parsedAmount = parseFloat(amount);
 
     const incomeToUpdate = await TransactionModel.findById(req.params.id);
-    const categoryToUpdate = await CategoryModel.findById(incomeToUpdate.category);
+    const categoryToUpdate = await CategoryModel.findById(
+      incomeToUpdate.category
+    );
     const newCategory = await CategoryModel.findById(category);
 
     if (!incomeToUpdate || !categoryToUpdate || !newCategory) {
       return res.status(404).json({ error: "Income or category not found" });
     }
 
+    const currentYear = new Date(incomeToUpdate.createdAt).getFullYear();
+    const currentMonth = new Date(incomeToUpdate.createdAt).getMonth() + 1;
+
     const currentAmount = parseFloat(incomeToUpdate.amount);
     const currentUserFunds = parseFloat(req.user.funds);
-    const currentUserEarned = parseFloat(req.user.earned);
+    const currentUserEarned = parseFloat( req.user.history.find(
+      (e) =>
+        e.year == new Date(incomeToUpdate.createdAt).getFullYear() &&
+        e.month == new Date(incomeToUpdate.createdAt).getMonth() + 1
+    ).earned);
     let updatedNewCategory;
     let updatedPrevCategory;
 
@@ -192,26 +336,50 @@ router.put("/update-income/:id", getUserClerkId, async (req, res) => {
     };
 
     if (incomeToUpdate.category == category) {
-      updatedNewCategory = await CategoryModel.findByIdAndUpdate(category, {
-        $inc: {
-          earned: parsedAmount - currentAmount,
+      updatedNewCategory = await CategoryModel.findOneAndUpdate(
+        {
+          _id: category,
+          "history.year": currentYear,
+          "history.month": currentMonth,
         },
-      }, {new: true});
+        {
+          $inc: {
+            "history.$.earned": parsedAmount - currentAmount,
+          },
+        },
+        { new: true }
+      );
       updatedPrevCategory = null;
     } else {
       // Decrement the earned amount from the previous category
-      updatedPrevCategory = await CategoryModel.findByIdAndUpdate(incomeToUpdate.category, {
-        $inc: {
-          earned: -currentAmount,
+      updatedPrevCategory = await CategoryModel.findOneAndUpdate(
+        {
+          _id: incomeToUpdate.category,
+          "history.year": currentYear,
+          "history.month": currentMonth,
         },
-      }, {new: true});
+        {
+          $inc: {
+            "history.$.earned": -currentAmount,
+          },
+        },
+        { new: true }
+      );
 
       // Increment the earned amount for the new category
-      updatedNewCategory = await CategoryModel.findByIdAndUpdate(category, {
-        $inc: {
-          earned: parsedAmount,
+      updatedNewCategory = await CategoryModel.findOneAndUpdate(
+        {
+          _id: category,
+          "history.year": currentYear,
+          "history.month": currentMonth,
         },
-      }, {new: true});
+        {
+          $inc: {
+            "history.$.earned": parsedAmount,
+          },
+        },
+        { new: true }
+      );
     }
 
     // Update user funds and earned
@@ -223,13 +391,17 @@ router.put("/update-income/:id", getUserClerkId, async (req, res) => {
       updatedUserInfo.earned += parsedAmount - currentAmount;
     }
 
-    const updatedUser = await UserModel.findByIdAndUpdate(
-      req.user._id,
+    const updatedUser = await UserModel.findOneAndUpdate(
+      {
+        _id: req.user._id,
+        "history.year": currentYear,
+        "history.month": currentMonth,
+      },
       {
         funds: Number.isFinite(updatedUserInfo.funds)
           ? updatedUserInfo.funds
           : currentUserFunds,
-        earned: Number.isFinite(updatedUserInfo.earned)
+        "history.$.earned": Number.isFinite(updatedUserInfo.earned)
           ? updatedUserInfo.earned
           : currentUserEarned,
       },
@@ -259,14 +431,15 @@ router.put("/update-income/:id", getUserClerkId, async (req, res) => {
   }
 });
 
-
 router.put("/update-expense/:id", getUserClerkId, async (req, res) => {
   try {
     const { name, amount, description, category } = req.body;
     const parsedAmount = parseFloat(amount);
 
     const expenseToUpdate = await TransactionModel.findById(req.params.id);
-    const categoryToUpdate = await CategoryModel.findById(expenseToUpdate.category);
+    const categoryToUpdate = await CategoryModel.findById(
+      expenseToUpdate.category
+    );
     const newCategory = await CategoryModel.findById(category);
 
     if (!expenseToUpdate || !categoryToUpdate || !newCategory) {
@@ -275,7 +448,13 @@ router.put("/update-expense/:id", getUserClerkId, async (req, res) => {
 
     const currentAmount = parseFloat(expenseToUpdate.amount);
     const currentUserFunds = parseFloat(req.user.funds);
-    const currentUserSpent = parseFloat(req.user.spent);
+    const currentUserSpent = parseFloat(
+      req.user.history.find(
+        (e) =>
+          e.year == new Date(expenseToUpdate.createdAt).getFullYear() &&
+          e.month == new Date(expenseToUpdate.createdAt).getMonth() + 1
+      ).spent
+    );
     let updatedNewCategory;
     let updatedPrevCategory;
 
@@ -283,29 +462,52 @@ router.put("/update-expense/:id", getUserClerkId, async (req, res) => {
       funds: currentUserFunds,
       spent: currentUserSpent,
     };
-    
 
     if (expenseToUpdate.category == category) {
-      updatedNewCategory = await CategoryModel.findByIdAndUpdate(category, {
-        $inc: {
-          spent: parsedAmount - currentAmount,
+      updatedNewCategory = await CategoryModel.findOneAndUpdate(
+        {
+          _id: category,
+          "history.year": new Date(expenseToUpdate.createdAt).getFullYear(),
+          "history.month": new Date(expenseToUpdate.createdAt).getMonth() + 1,
         },
-      }, {new: true});
+        {
+          $inc: {
+            "history.$.spent": parsedAmount - currentAmount,
+          },
+        },
+        { new: true }
+      );
       updatedPrevCategory = null;
     } else {
       // Decrement the spent amount from the previous category
-      updatedPrevCategory = await CategoryModel.findByIdAndUpdate(expenseToUpdate.category, {
-        $inc: {
-          spent: -currentAmount,
+      updatedPrevCategory = await CategoryModel.findOneAndUpdate(
+        {
+          _id: expenseToUpdate.category,
+          "history.year": new Date(expenseToUpdate.createdAt).getFullYear(),
+          "history.month": new Date(expenseToUpdate.createdAt).getMonth() + 1,
         },
-      }, {new: true});
+        {
+          $inc: {
+            "history.$.spent": -currentAmount,
+          },
+        },
+        { new: true }
+      );
 
       // Increment the spent amount for the new category
-      updatedNewCategory = await CategoryModel.findByIdAndUpdate(category, {
-        $inc: {
-          spent: parsedAmount,
+      updatedNewCategory = await CategoryModel.findOneAndUpdate(
+        {
+          _id: category,
+          "history.year": new Date(expenseToUpdate.createdAt).getFullYear(),
+          "history.month": new Date(expenseToUpdate.createdAt).getMonth() + 1,
         },
-      }, {new: true});
+        {
+          $inc: {
+            "history.$.spent": parsedAmount,
+          },
+        },
+        { new: true }
+      );
     }
 
     // Update user funds and spent
@@ -317,13 +519,17 @@ router.put("/update-expense/:id", getUserClerkId, async (req, res) => {
       updatedUserInfo.spent += parsedAmount - currentAmount;
     }
 
-    const updatedUser = await UserModel.findByIdAndUpdate(
-      req.user._id,
+    const updatedUser = await UserModel.findOneAndUpdate(
+      {
+        _id: req.user._id,
+        "history.year": new Date(expenseToUpdate.createdAt).getFullYear(),
+        "history.month": new Date(expenseToUpdate.createdAt).getMonth() + 1,
+      },
       {
         funds: Number.isFinite(updatedUserInfo.funds)
           ? updatedUserInfo.funds
           : currentUserFunds,
-        spent: Number.isFinite(updatedUserInfo.spent)
+        "history.$.spent": Number.isFinite(updatedUserInfo.spent)
           ? updatedUserInfo.spent
           : currentUserSpent,
       },
@@ -345,14 +551,13 @@ router.put("/update-expense/:id", getUserClerkId, async (req, res) => {
       newExpense,
       updatedUser,
       updatedPrevCategory,
-      updatedNewCategory
+      updatedNewCategory,
     });
   } catch (error) {
     console.log(error);
     return res.status(500).json({ error: "Internal Server Error" });
   }
 });
-
 
 router.delete("/delete-expense/:id", getUserClerkId, async (req, res) => {
   try {
@@ -366,9 +571,17 @@ router.delete("/delete-expense/:id", getUserClerkId, async (req, res) => {
       return res.status(404).json({ error: "Expense or category not found" });
     }
 
+    const userSpentFromHistory = req.user.history.find(
+      (e) =>
+        e.month == new Date(expenseToDelete.createdAt).getMonth() + 1 &&
+        new Date(expenseToDelete.createdAt).getFullYear() == e.year
+    );
+
     const currentUserFunds = parseFloat(req.user.funds);
-    const currentUserSpent = parseFloat(req.user.spent);
-    const currentCategorySpent = parseFloat(categoryToUpdate.spent);
+    const currentUserSpent = parseFloat(userSpentFromHistory.spent);
+    const currentCategorySpent = parseFloat(
+      categoryToUpdate.history[categoryToUpdate.history.length - 1].spent
+    );
 
     let updatedUserInfo = {
       funds: currentUserFunds,
@@ -382,23 +595,31 @@ router.delete("/delete-expense/:id", getUserClerkId, async (req, res) => {
     updatedUserInfo.spent -= parsedAmount;
     updatedCategoryInfo.spent -= parsedAmount;
 
-    const updatedUser = await UserModel.findByIdAndUpdate(
-      req.user._id,
+    const updatedUser = await UserModel.findOneAndUpdate(
+      {
+        _id: req.user._id,
+        "history.month": new Date(expenseToDelete.createdAt).getMonth() + 1,
+        "history.year": new Date(expenseToDelete.createdAt).getFullYear(),
+      },
       {
         funds: Number.isFinite(updatedUserInfo.funds)
           ? updatedUserInfo.funds
           : currentUserFunds,
-        spent: Number.isFinite(updatedUserInfo.spent)
+        "history.$.spent": Number.isFinite(updatedUserInfo.spent)
           ? updatedUserInfo.spent
           : currentUserSpent,
       },
       { new: true }
     );
 
-    const updatedCategory = await CategoryModel.findByIdAndUpdate(
-      category,
+    const updatedCategory = await CategoryModel.findOneAndUpdate(
       {
-        spent: Number.isFinite(updatedCategoryInfo.spent)
+        _id: category,
+        "history.year": new Date(expenseToDelete.createdAt).getFullYear(),
+        "history.month": new Date(expenseToDelete.createdAt).getMonth() + 1,
+      },
+      {
+        "history.$.spent": Number.isFinite(updatedCategoryInfo.spent)
           ? updatedCategoryInfo.spent
           : currentCategorySpent,
       },
@@ -430,9 +651,17 @@ router.delete("/delete-income/:id", getUserClerkId, async (req, res) => {
       return res.status(404).json({ error: "Expense or category not found" });
     }
 
+    const userEarnedFromHistory = req.user.history.find(
+      (e) =>
+        e.month == new Date(incomeToDelete.createdAt).getMonth() + 1 &&
+        new Date(incomeToDelete.createdAt).getFullYear() == e.year
+    );
+
     const currentUserFunds = parseFloat(req.user.funds);
-    const currentUserEarned = parseFloat(req.user.earned);
-    const currentCategoryEarned = parseFloat(categoryToUpdate.earned);
+    const currentUserEarned = parseFloat(userEarnedFromHistory.earned);
+    const currentCategoryEarned = parseFloat(
+      categoryToUpdate.history[categoryToUpdate.history.length - 1].earned
+    );
 
     let updatedUserInfo = {
       funds: currentUserFunds,
@@ -446,26 +675,31 @@ router.delete("/delete-income/:id", getUserClerkId, async (req, res) => {
     updatedUserInfo.earned -= parsedAmount;
     updatedCategoryInfo.earned -= parsedAmount;
 
-    console.log(updatedUserInfo);
-    console.log(updatedCategoryInfo);
-
-    const updatedUser = await UserModel.findByIdAndUpdate(
-      req.user._id,
+    const updatedUser = await UserModel.findOneAndUpdate(
+      {
+        _id: req.user._id,
+        "history.month": new Date(incomeToDelete.createdAt).getMonth() + 1,
+        "history.year": new Date(incomeToDelete.createdAt).getFullYear(),
+      },
       {
         funds: Number.isFinite(updatedUserInfo.funds)
           ? updatedUserInfo.funds
           : currentUserFunds,
-        earned: Number.isFinite(updatedUserInfo.earned)
+        "history.$.earned": Number.isFinite(updatedUserInfo.earned)
           ? updatedUserInfo.earned
           : currentUserEarned,
       },
       { new: true }
     );
 
-    const updatedCategory = await CategoryModel.findByIdAndUpdate(
-      category,
+    const updatedCategory = await CategoryModel.findOneAndUpdate(
       {
-        earned: Number.isFinite(updatedCategoryInfo.earned)
+        _id: category,
+        "history.year": new Date(incomeToDelete.createdAt).getFullYear(),
+        "history.month": new Date(incomeToDelete.createdAt).getMonth() + 1,
+      },
+      {
+        "history.$.earned": Number.isFinite(updatedCategoryInfo.earned)
           ? updatedCategoryInfo.earned
           : currentCategoryEarned,
       },

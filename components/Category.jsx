@@ -7,7 +7,7 @@ export default function Category({ index, category }) {
   const [progressValue, setProgressValue] = useState(0);
 
   useEffect(() => {
-    const percent = (category.spent / category.limit) * 100;
+    const percent = (category.history[category.history.length - 1].spent / category.limit) * 100;
     setProgressValue(percent);
   }, [transactions, categories]);
 
@@ -22,7 +22,7 @@ export default function Category({ index, category }) {
   };
 
   const showAmountSpent = () => {
-    return `Spent: ${category.spent}/${category.limit}`;
+    return `Spent: ${category.history[category.history.length - 1].spent}/${category.limit}`;
   };
 
   return (
@@ -102,7 +102,7 @@ export default function Category({ index, category }) {
           )}
 
           {!category?.isExpense && (
-            <span className="text-green-500">+{category?.earned}</span>
+            <span className="text-green-500">+{category?.history[category?.history?.length - 1]?.earned}</span>
           )}
         </div>
       </div>

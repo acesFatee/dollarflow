@@ -72,10 +72,18 @@ export default function Modal() {
       setCategories((prev) =>
         prev.map((c) =>
           c._id === response.updatedCategory._id
-            ? { ...c, spent: c.spent + newExpense.amount }
+            ? {
+                ...c,
+                history: c.history.map((entry, index) =>
+                  index === c.history.length - 1
+                    ? { ...entry, spent: entry.spent + newExpense.amount }
+                    : entry
+                ),
+              }
             : c
         )
       );
+      
       setExpense({
         name: "",
         amount: "",
@@ -85,8 +93,7 @@ export default function Modal() {
       setUser((prev) => ({
         ...prev,
         funds: response.updatedUser.funds,
-        spent: response.updatedUser.spent,
-        earned: response.updatedUser.earned,
+        history: response.updatedUser.history
       }));
 
       setRecentTransactions((prev) => {
@@ -132,7 +139,7 @@ export default function Modal() {
       setCategories((prev) =>
         prev.map((c) =>
           c._id == response.updatedCategory._id
-            ? { ...c, earned: c.earned + newIncome.amount }
+            ? { ...c, c: c.history[c.history.length - 1].earned + newIncome.amount }
             : c
         )
       );
@@ -140,8 +147,7 @@ export default function Modal() {
       setUser((prev) => ({
         ...prev,
         funds: response.updatedUser.funds,
-        spent: response.updatedUser.spent,
-        earned: response.updatedUser.earned,
+        history: response.updatedUser.history
       }));
 
       setRecentTransactions((prev) => {

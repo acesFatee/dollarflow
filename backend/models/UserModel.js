@@ -23,18 +23,26 @@ const userSchema = new Schema({
     type: Number,
     default: 0
   },
-  currency: {
-    type: String,
-    required: true
-  },
-  spent: {
-    type: Number,
-    default: 0
-  },
-  earned: {
-    type: Number,
-    default: 0
-  },
+  history: [
+    {
+      spent: {
+        type: Number,
+        default: 0,
+      },
+      earned: {
+        type: Number,
+        default: 0,
+      },
+      year: {
+        type: Number,
+        required: true,
+      },
+      month: {
+        type: Number,
+        required: true,
+      },
+    },
+  ],
 });
 
 const User = mongoose.model('User', userSchema);
