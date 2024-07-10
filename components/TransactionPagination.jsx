@@ -9,9 +9,10 @@ export default function TransactionPagination({category}) {
     transactionPage,
     setTransactionPage,
     transactionSearch,
-    transactionFilter,
     setTransactions,
     transactionTotalPages,
+    selectedYear,
+    selectedMonth
   } = useContext(Context);
 
   const fetchTransactions = async () => {
@@ -23,8 +24,9 @@ export default function TransactionPagination({category}) {
     const response = await getTransactions(
       nextPage,
       transactionSearch,
-      transactionFilter,
-      category ? category : null
+      category ? category : null,
+      selectedYear,
+      selectedMonth
     );
     setTransactions(response.transactions);
   };
@@ -35,8 +37,9 @@ export default function TransactionPagination({category}) {
     const response = await getTransactions(
       nextPage,
       transactionSearch,
-      transactionFilter,
-      category ? category : null
+      category ? category : null,
+      selectedYear,
+      selectedMonth
     );
     setTransactions(response.transactions);
   };

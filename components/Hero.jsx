@@ -51,7 +51,7 @@ export default function Hero() {
                 </li>
                 <li>
                   <a className="btn bg-purple-300 hover:bg-purple-400 text-black bt btn-ghost">
-                    <SignInButton mode="modal" />
+                    <SignInButton mode="modal"/>
                   </a>
                 </li>
               </ul>

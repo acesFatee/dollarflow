@@ -11,10 +11,10 @@ import EditModal from "@/components/EditModal";
 import DeleteModal from "@/components/DeleteModal";
 import Drawer from "@/components/Drawer";
 
-import { Inter } from "next/font/google";
+import { DM_Sans, Inter, Nunito } from "next/font/google";
 import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = DM_Sans({ subsets: ["latin"] });
 
 export const metadata = {
   title: "DollarFlow - Manage Your Expenses with Ease",
@@ -56,7 +56,7 @@ export default async function RootLayout({ children }) {
   return (
     <ClerkProvider>
       <Provider>
-        <html data-theme="light" lang="en">
+        <html data-theme="cupcake" lang="en">
           <body className={inter.className}>
             <SignedIn>
               <div className="app grid xl:grid-cols-12 lg:h-screen">

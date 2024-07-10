@@ -1,21 +1,10 @@
 "use client";
 
 import { Context } from "@/Context/Context";
-import { getTransactions } from "@/api";
-import React, { useContext } from "react";
+import { useContext } from "react";
 
-export default function TransactionFilter({ category }) {
-  const {
-    setTransactions,
-    transactionSearch,
-    settransactionTotalPages,
-    setTransactionPage,
-    selectedYear,
-    setSelectedYear,
-    selectedMonth,
-    setSelectedMonth,
-  } = useContext(Context);
-
+export default function History() {
+  const {dashboardTime, setDashboardTime} = useContext(Context)
   const currentYear = new Date().getFullYear();
   const startYear = 2023;
   const years = [];
@@ -38,30 +27,20 @@ export default function TransactionFilter({ category }) {
     years.push(year);
   }
 
-  const fetchFilteredTransactions = async (year, month) => {
-    const filteredTransactions = await getTransactions(
-      1,
-      transactionSearch,
-      category ? category : null,
-      year,
-      month
-    );
-
-    setTransactionPage(1);
-    settransactionTotalPages(filteredTransactions?.totalPages);
-    setTransactions(filteredTransactions?.transactions);
-  };
-
   return (
-    <div className="flex flex-wrap space-x-6 items-center">
+    <div className="flex pt-3 justify-start md:justify-end flex-wrap space-x-6 items-center">
       <div className="flex items-center">
         <select
           id="year-select"
-          className="select select-bordered"
-          value={selectedYear}
+          className="select select-bordered select-sm"
+          value={dashboardTime.year}
           onChange={(e) => {
-            setSelectedYear(e.target.value);
-            fetchFilteredTransactions(e.target.value, selectedMonth);
+            setDashboardTime(prev => (
+              {
+                ...prev,
+                year: parseInt(e.target.value)
+              }
+            ))
           }}
         >
           {years.map((y) => (
@@ -75,11 +54,15 @@ export default function TransactionFilter({ category }) {
       <div className="flex items-center">
         <select
           id="month-select"
-          className="select select-bordered"
-          value={selectedMonth}
+          className="select select-bordered select-sm"
+          value={dashboardTime.month}
           onChange={(e) => {
-            setSelectedMonth(e.target.value);
-            fetchFilteredTransactions(selectedYear, e.target.value);
+            setDashboardTime(prev => (
+              {
+                ...prev,
+                month: parseInt(e.target.value)
+              }
+            ))
           }}
         >
           {months.map((m) => (

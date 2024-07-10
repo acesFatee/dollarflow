@@ -4,8 +4,16 @@ import { Context } from "@/Context/Context";
 import React, { useContext, useEffect, useState } from "react";
 
 export default function Funds() {
-  const { user, categories } = useContext(Context);
+  const { user, categories, dashboardTime  } = useContext(Context);
   const [topSpentCategories, setTopSpentCategories] = useState([])
+
+  const getHistoricalRecord = (history) => {
+    const record = history?.find(
+      (c) => c.year === dashboardTime.year && c.month === dashboardTime.month
+    );
+    return record ? record.spent : 0;
+  };
+  
 
   useEffect(() => {
     const sortedCategories = categories
@@ -26,6 +34,14 @@ export default function Funds() {
       return "text-red-500";
     }
   }
+
+  const getUserSpentAndEarned = (year, month) => {
+    const historyRecord = user?.history?.find(u => u.year === year && u.month === month)
+    return {
+      spent: historyRecord?.spent || 0,
+      earned: historyRecord?.earned || 0
+    }
+  }
   
 
   return (
@@ -38,12 +54,12 @@ export default function Funds() {
 
         <div className="total-earned text-center md:text-left">
           <h2 className="font-semibold text-sm md:text-md">Earned</h2>
-          <p className="text-lg text-blue-500">${user?.history[user?.history?.length - 1]?.earned}</p>
+          <p className="text-lg text-blue-500">${getUserSpentAndEarned(dashboardTime.year, dashboardTime.month)?.earned}</p>
         </div>
 
         <div className="total-spent text-center md:text-left">
           <h2 className="font-semibold text-sm md:text-md">Spent</h2>
-          <p className="text-lg text-red-500">${user?.history[user?.history?.length - 1]?.spent}</p>
+          <p className="text-lg text-red-500">${getUserSpentAndEarned(dashboardTime.year, dashboardTime.month)?.spent}</p>
         </div>
       </div>
       <hr className="my-3 border-base-300" />
@@ -54,8 +70,8 @@ export default function Funds() {
           {topSpentCategories.map((category, index) => (
             <div key={index} className="category-item p-4 rounded-lg">
               <h3 className="font-semibold text-sm md:text-md">{category.name}</h3>
-              <p className={`text-lg ${percentSpentOnCategory(category.history[category.history.length - 1].spent, category.limit)}`}>
-                {category.history[category.history.length - 1].spent}/{category.limit}
+              <p className={`text-lg ${percentSpentOnCategory(getHistoricalRecord(category.history), category.limit)}`}>
+                {getHistoricalRecord(category.history)}/{category.limit}
               </p>
             </div>
           ))}

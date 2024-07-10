@@ -91,7 +91,7 @@ export default function Sidebar({ serverUser, categoriesData }) {
             <li>
               <Link
                 href="/transactions"
-                className={`block rounded-lg px-4 py-2 text-sm font-medium hover:bg-base-200 ${pathName.split('/').pop() === "transactions" && 'bg-base-300'}`}
+                className={`block rounded-lg px-4 py-2 text-sm font-medium hover:bg-base-300 ${pathName.split('/').pop() === "transactions" && 'bg-base-300'}`}
               >
                 Transactions
               </Link>

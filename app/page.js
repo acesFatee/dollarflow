@@ -1,5 +1,6 @@
 import { getRecentTransactions } from "@/api";
 import Funds from "@/components/Funds";
+import History from "@/components/History";
 import RecentTransactions from "@/components/RecentTransactions";
 import SpendHistory from "@/components/SpendHistory";
 
@@ -18,7 +19,9 @@ export default async function Home() {
         <section className="recent-transactions col-span-1 lg:col-span-2 border-base-300 rounded-3xl p-4 border-2">
           <h1 className="font-bold py-3 text-lg">Recent Transactions</h1>
           <RecentTransactions
-            recentTransactionsServer={recentTransactionsData?.recentTransactions || []}
+            recentTransactionsServer={
+              recentTransactionsData?.recentTransactions || []
+            }
           />
         </section>
       </div>
@@ -30,7 +33,10 @@ export default async function Home() {
         </section>
 
         <section className="spend-history col-span-1 lg:col-span-2 border-base-300 rounded-3xl p-4 border-2">
-          <h1 className="font-bold py-3 text-lg">Spending Analysis</h1>
+          <div className="dashboard-top-heading-and-filters grid grid-cols-1 md:grid-cols-2">
+            <h1 className="font-bold pt-3 text-lg">Spend History</h1>
+            <History historyFor="user" />
+          </div>
           <SpendHistory />
         </section>
       </div>

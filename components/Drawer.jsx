@@ -21,7 +21,7 @@ export default function Drawer({ serverUser, categoriesData, children }) {
           {/* Button to open the drawer */}
           <label
             htmlFor="my-drawer"
-            className="drawer-button xl:hidden fixed bottom-4 left-4 p-3 bg-purple-300 hover:bg-purple-400 rounded-3xl cursor-pointer"
+            className="drawer-button xl:hidden fixed bottom-4 left-4 p-3 bg-purple-400 hover:bg-purple-500 rounded-3xl cursor-pointer"
           >
             <svg
               className={`w-6 h-6 text-black`}

@@ -8,7 +8,7 @@ import React from "react";
 export default async function Page() {
   const currentYear = new Date().getFullYear();
   const currentMonth = new Date().getMonth() + 1;
-  const response = await getTransactions(1, "", null, null, currentYear, currentMonth);
+  const response = await getTransactions(1, "", null, currentYear, currentMonth);
   const transactions = response.transactions;
   const totalPages = response.totalPages
 
@@ -21,7 +21,7 @@ export default async function Page() {
         <section className="search-transactions pt-4 flex-1">
           <SearchTransactions  transactionsServer = {transactions}/>
         </section>
-        <section className="filter-transactions my-3 lg:mt-7 flex-1">
+        <section className="filter-transactions pt-4 flex-1">
           <TransactionFilter />
         </section>
       </div>

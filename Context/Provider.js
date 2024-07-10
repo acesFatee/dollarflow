@@ -20,12 +20,16 @@ const Provider = ({ children }) => {
   const [theme, setTheme] = useState("light")
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
+  const [dashboardTime, setDashboardTime] = useState({
+    year: new Date().getFullYear(),
+    month: new Date().getMonth() + 1
+  })
   
   useEffect(() => {
     if(theme === "dark"){
-      document.querySelector('html').setAttribute('data-theme', "dark")
+      document.querySelector('html').setAttribute('data-theme', "dim")
     }else{
-      document.querySelector('html').setAttribute('data-theme', "light")
+      document.querySelector('html').setAttribute('data-theme', "cupcake")
     }
   }, [theme, setTheme])
   
@@ -51,7 +55,8 @@ const Provider = ({ children }) => {
         openDelete, setOpenDelete,
         theme, setTheme,
         selectedYear, setSelectedYear,
-        selectedMonth, setSelectedMonth
+        selectedMonth, setSelectedMonth,
+        dashboardTime, setDashboardTime
       }}
     >
       {children}

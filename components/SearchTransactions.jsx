@@ -8,7 +8,6 @@ export default function SearchTransactions({ category }) {
   const {
     transactionSearch,
     setTransactionSearch,
-    transactionFilter,
     setTransactions,
     setTransactionPage,
     settransactionTotalPages,
@@ -23,7 +22,6 @@ export default function SearchTransactions({ category }) {
       const response = await getTransactions(
         1,
         "",
-        transactionFilter,
         category ? category : null,
         selectedYear,
         selectedMonth
@@ -36,7 +34,6 @@ export default function SearchTransactions({ category }) {
     const response = await getTransactions(
       1,
       query,
-      transactionFilter,
       category ? category : null,
       selectedYear,
       selectedMonth
