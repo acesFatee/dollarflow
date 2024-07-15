@@ -20,41 +20,15 @@ router.post("/create-user", verifySignupWebhook, async (req, res) => {
         {
           year: new Date().getFullYear(),
           month: new Date().getMonth() + 1,
-          spent: 0, 
-          earned: 0
-        }
-      ]
+          spent: 0,
+          earned: 0,
+        },
+      ],
     });
 
     await newUser.save();
 
     return res.status(201).json({ newUser });
-  } catch (error) {
-    console.log(error);
-    return res.status(500).json({ error: "Internal Server Error" });
-  }
-});
-
-router.put("/update-user/:id", async (req, res) => {
-  try {
-    const userId = req.params.id;
-    const { funds, currency } = req.body;
-
-    const updateData = {};
-    if (funds !== undefined) updateData.funds = funds;
-    if (currency !== undefined) updateData.currency = currency;
-
-    const updatedUser = await UserModel.findByIdAndUpdate(
-      userId,
-      { $set: updateData },
-      { new: true, runValidators: true }
-    );
-
-    if (!updatedUser) {
-      return res.status(404).json({ error: "User not found" });
-    }
-
-    return res.status(200).json({ updatedUser });
   } catch (error) {
     console.log(error);
     return res.status(500).json({ error: "Internal Server Error" });
@@ -68,6 +42,31 @@ router.get(
   async (req, res) => {
     try {
       return res.status(200).json({ user: req.user });
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({ error: "Internal Server Error" });
+    }
+  }
+);
+
+router.post(
+  "/add-funds",
+  ClerkExpressRequireAuth({}),
+  getUserClerkId,
+  async (req, res) => {
+    try {
+      const amount = parseInt(req.body.amount);
+      if (isNaN(amount)) {
+        return res.status(400).json({ error: "Invalid amount" });
+      }
+
+      const updatedUser = await UserModel.findByIdAndUpdate(
+        req.user._id,
+        { $inc: { funds: amount } }, 
+        { new: true } 
+      );
+
+      return res.status(200).json({updatedUser});
     } catch (error) {
       console.log(error);
       return res.status(500).json({ error: "Internal Server Error" });

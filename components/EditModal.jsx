@@ -124,6 +124,8 @@ export default function EditModal() {
               type="text"
               name="name"
               id="name"
+              min={1}
+              step={0.01}
               value={income.name}
               onChange={(e) =>
                 setIncome((prev) => ({ ...prev, name: e.target.value }))
@@ -142,6 +144,8 @@ export default function EditModal() {
                 type="number"
                 name="amount"
                 id="amount"
+                min={1}
+                step={0.01}
                 value={income.amount}
                 onChange={(e) =>
                   setIncome((prev) => ({ ...prev, amount: e.target.value }))
@@ -266,6 +270,8 @@ export default function EditModal() {
                   type="number"
                   name="limit"
                   id="limit"
+                  min={1}
+                  step={0.01}
                   value={category.limit}
                   onChange={(e) =>
                     setCategory((prev) => ({ ...prev, limit: e.target.value }))

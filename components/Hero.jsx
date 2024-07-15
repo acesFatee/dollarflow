@@ -1,19 +1,19 @@
-'use client'
+"use client";
 
 import { Context } from "@/Context/Context";
 import { SignInButton, SignUpButton } from "@clerk/nextjs";
 import React, { useContext } from "react";
 
 export default function Hero() {
-  const {theme, setTheme} = useContext(Context)
+  const { theme, setTheme } = useContext(Context);
 
   const changeTheme = () => {
-    if(theme === 'light'){
-      setTheme('dark')
-    }else{
-      setTheme("light")
+    if (theme === "light") {
+      setTheme("dark");
+    } else {
+      setTheme("light");
     }
-  }
+  };
 
   return (
     <>
@@ -51,7 +51,7 @@ export default function Hero() {
                 </li>
                 <li>
                   <a className="btn bg-purple-300 hover:bg-purple-400 text-black bt btn-ghost">
-                    <SignInButton mode="modal"/>
+                    <SignInButton mode="modal" />
                   </a>
                 </li>
               </ul>
@@ -188,9 +188,10 @@ export default function Hero() {
       <section className="body-font">
         <div className="container px-5 py-24 mx-auto">
           <div className="text-center mb-20">
-            <h1 className="sm:text-3xl text-2xl font-medium title-font mb-4">
-              Features You'll Love
+            <h1 className="sm:text-4xl text-3xl font-medium title-font mb-4">
+              Features You&apos;ll Love
             </h1>
+
             <p className="text-base leading-relaxed xl:w-2/4 lg:w-3/4 mx-auto text-gray-500">
               DollarFlow offers a variety of features designed to help you
               manage your finances effectively and efficiently.

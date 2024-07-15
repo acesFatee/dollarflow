@@ -13,6 +13,7 @@ import Drawer from "@/components/Drawer";
 
 import { DM_Sans, Inter, Nunito } from "next/font/google";
 import "./globals.css";
+import InitialFunds from "@/components/InitialFunds";
 
 const inter = DM_Sans({ subsets: ["latin"] });
 
@@ -63,6 +64,7 @@ export default async function RootLayout({ children }) {
                 <Modal />
                 <EditModal />
                 <DeleteModal />
+                <InitialFunds />
 
                 <div className="sidebar hidden xl:block col-span-2 lg:h-screen lg:overflow-y-hidden">
                   <Sidebar
@@ -79,8 +81,10 @@ export default async function RootLayout({ children }) {
                   <Drawer
                     serverUser={user}
                     categoriesData={categoriesData?.categories || []}
-                    children={children}
-                  />
+                    
+                  >
+                    {children}
+                  </Drawer>
                 </div>
 
                 <div className="rest-of-page px-5 xl:block hidden col-span-12 xl:col-span-10 lg:h-screen lg:overflow-y-auto">

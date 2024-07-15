@@ -219,12 +219,14 @@ export const getTransactions = async (page, search, category, year, month) => {
       },
       { cache: "no-store" }
     );
-
     if (response.ok) {
       const data = await response.json();
       return data;
     }
-    return null;
+    else if(response.status == 400){
+      const data = await response.json()
+      return data
+    }
   } catch (error) {
     return error;
   }
@@ -292,6 +294,29 @@ export const deleteIncome = async (income) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(income),
+      }
+    );
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
+};
+
+export const addFunds = async (amount) => {
+  const { getToken } = auth();
+  try {
+    const token = await getToken();
+    const response = await fetch(
+      "http://localhost:5000/api/users/add-funds",
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({amount}),
       }
     );
     const data = await response.json();

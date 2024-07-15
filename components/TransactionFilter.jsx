@@ -2,9 +2,9 @@
 
 import { Context } from "@/Context/Context";
 import { getTransactions } from "@/api";
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 
-export default function TransactionFilter({ category }) {
+export default function TransactionFilter({ category, forCategory }) {
   const {
     setTransactions,
     transactionSearch,
@@ -34,8 +34,18 @@ export default function TransactionFilter({ category }) {
     { value: 12, name: "December" },
   ];
 
+  useEffect(() => {
+    setSelectedYear(new Date().getFullYear())
+    setSelectedMonth(new Date().getMonth() + 1)
+  }, [])
+  
+
   for (let year = currentYear; year >= startYear; year--) {
     years.push(year);
+  }
+
+  const showPreviousCategories = (year, month) => {
+    
   }
 
   const fetchFilteredTransactions = async (year, month) => {
@@ -61,7 +71,11 @@ export default function TransactionFilter({ category }) {
           value={selectedYear}
           onChange={(e) => {
             setSelectedYear(e.target.value);
-            fetchFilteredTransactions(e.target.value, selectedMonth);
+            if(forCategory){
+              showPreviousCategories(e.target.value, selectedMonth)
+            }else{
+              fetchFilteredTransactions(e.target.value, selectedMonth);
+            }
           }}
         >
           {years.map((y) => (
@@ -79,7 +93,11 @@ export default function TransactionFilter({ category }) {
           value={selectedMonth}
           onChange={(e) => {
             setSelectedMonth(e.target.value);
-            fetchFilteredTransactions(selectedYear, e.target.value);
+            if(forCategory){
+              showPreviousCategories(selectedYear, e.target.value)
+            }else{
+              fetchFilteredTransactions(selectedYear, e.target.value);
+            }
           }}
         >
           {months.map((m) => (

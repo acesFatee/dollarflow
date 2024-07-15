@@ -28,7 +28,7 @@ export default async function Home() {
 
       <div className="dashboard-top w-full grid grid-cols-1 my-3 lg:grid-cols-3 gap-4">
         <section className="recent-budgets h-full col-span-1 border-base-300 rounded-3xl p-4 border-2">
-          <h1 className="font-bold pt-3 text-lg">Account Balance</h1>
+          <h1 className="font-bold py-3 text-lg">Account Balance</h1>
           <Funds />
         </section>
 

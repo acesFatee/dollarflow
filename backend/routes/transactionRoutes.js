@@ -4,6 +4,7 @@ const TransactionModel = require("../models/TransactionModel");
 const getUserClerkId = require("../middlewares/getUserClerkId");
 const UserModel = require("../models/UserModel");
 const CategoryModel = require("../models/CategoryModel");
+const mongoose = require("mongoose");
 
 router.get("/", getUserClerkId, async (req, res) => {
   try {
@@ -27,9 +28,15 @@ router.get("/", getUserClerkId, async (req, res) => {
 
     if (req.query.category !== "null") {
       query.category = req.query.category;
+      if (!mongoose.Types.ObjectId.isValid(query.category)) {
+        return res.status(400).json({ error: "Not a valid ID" });
+      }
       const categoryNameResponse = await CategoryModel.findById(
         req.query.category
       );
+      if (!categoryNameResponse) {
+        return res.status(400).json({ error: "No Category Found" });
+      }
       categoryName = categoryNameResponse.name;
     }
 
@@ -322,11 +329,13 @@ router.put("/update-income/:id", getUserClerkId, async (req, res) => {
 
     const currentAmount = parseFloat(incomeToUpdate.amount);
     const currentUserFunds = parseFloat(req.user.funds);
-    const currentUserEarned = parseFloat( req.user.history.find(
-      (e) =>
-        e.year == new Date(incomeToUpdate.createdAt).getFullYear() &&
-        e.month == new Date(incomeToUpdate.createdAt).getMonth() + 1
-    ).earned);
+    const currentUserEarned = parseFloat(
+      req.user.history.find(
+        (e) =>
+          e.year == new Date(incomeToUpdate.createdAt).getFullYear() &&
+          e.month == new Date(incomeToUpdate.createdAt).getMonth() + 1
+      ).earned
+    );
     let updatedNewCategory;
     let updatedPrevCategory;
 

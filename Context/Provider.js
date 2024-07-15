@@ -24,6 +24,7 @@ const Provider = ({ children }) => {
     year: new Date().getFullYear(),
     month: new Date().getMonth() + 1
   })
+  const [openFundsModal, setOpenFundsModal] = useState(false)
   
   useEffect(() => {
     if(theme === "dark"){
@@ -56,7 +57,8 @@ const Provider = ({ children }) => {
         theme, setTheme,
         selectedYear, setSelectedYear,
         selectedMonth, setSelectedMonth,
-        dashboardTime, setDashboardTime
+        dashboardTime, setDashboardTime,
+        openFundsModal, setOpenFundsModal
       }}
     >
       {children}

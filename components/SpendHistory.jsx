@@ -1,12 +1,16 @@
 "use client";
 
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Bar } from "react-chartjs-2";
 import "chart.js/auto";
 import { Context } from "@/Context/Context";
+import Loading from "./Loading";
+import NoData from "./NoData";
 
 export default function SpendHistory() {
   const { categories, dashboardTime } = useContext(Context);
+  const [expenseCategories, setExpenseCategories] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const getHistoricalRecord = (history) => {
     const record = history?.find(
@@ -14,9 +18,15 @@ export default function SpendHistory() {
     );
     return record ? record.spent : 0;
   };
-  
 
-  const expenseCategories = categories?.filter((e) => e.isExpense) || [];
+  useEffect(() => {
+    if (categories) {
+      const filteredCategories = categories.filter((e) => e.isExpense);
+      setExpenseCategories(filteredCategories);
+      setLoading(false);
+    }
+  }, [categories]);
+
   const data = {
     labels: expenseCategories.map((c) => c.name),
     datasets: [
@@ -47,13 +57,17 @@ export default function SpendHistory() {
     },
   };
 
+  if (loading) {
+    return <Loading loadingFor={'graph'} />;
+  }
+
   return (
-    <div className="w-full h-full p-4">
+    <div className="w-full h-full">
       <div className="flex justify-center h-[21rem] mt-6">
         {expenseCategories.length > 0 ? (
           <Bar data={data} options={options} />
         ) : (
-          <p>No expense data available.</p>
+          <NoData forSpendHistory={true} />
         )}
       </div>
     </div>

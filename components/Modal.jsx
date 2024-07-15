@@ -1,11 +1,7 @@
 "use client";
 
 import { Context } from "@/Context/Context";
-import {
-  addIncome,
-  createCategory,
-  createExpense,
-} from "@/api";
+import { addIncome, createCategory, createExpense } from "@/api";
 import React, { useContext, useState } from "react";
 
 export default function Modal() {
@@ -61,9 +57,13 @@ export default function Modal() {
 
   const handleSubmitExpense = async (e) => {
     e.preventDefault();
-
     setLoading(true);
-    const response = await createExpense(expense);
+    const response = await createExpense({
+      name: expense.name,
+      amount: expense.amount,
+      description: expense.amount,
+      category: categoryInput,
+    });
     if (response.error) {
       setLoading(false);
       alert(response.error);
@@ -83,7 +83,7 @@ export default function Modal() {
             : c
         )
       );
-      
+
       setExpense({
         name: "",
         amount: "",
@@ -93,7 +93,7 @@ export default function Modal() {
       setUser((prev) => ({
         ...prev,
         funds: response.updatedUser.funds,
-        history: response.updatedUser.history
+        history: response.updatedUser.history,
       }));
 
       setRecentTransactions((prev) => {
@@ -123,7 +123,12 @@ export default function Modal() {
   const handleSubmitIncome = async (e) => {
     e.preventDefault();
     setLoading(true);
-    const response = await addIncome(income);
+    const response = await addIncome({
+      name: income.name,
+      amount: income.amount,
+      description: income.description,
+      category: categoryInput,
+    });
     if (response.error) {
       setLoading(false);
       alert(response.error);
@@ -139,7 +144,10 @@ export default function Modal() {
       setCategories((prev) =>
         prev.map((c) =>
           c._id == response.updatedCategory._id
-            ? { ...c, c: c.history[c.history.length - 1].earned + newIncome.amount }
+            ? {
+                ...c,
+                c: c.history[c.history.length - 1].earned + newIncome.amount,
+              }
             : c
         )
       );
@@ -147,7 +155,7 @@ export default function Modal() {
       setUser((prev) => ({
         ...prev,
         funds: response.updatedUser.funds,
-        history: response.updatedUser.history
+        history: response.updatedUser.history,
       }));
 
       setRecentTransactions((prev) => {
@@ -221,6 +229,7 @@ export default function Modal() {
               type="number"
               name="amount"
               id="amount"
+              step="0.01"
               min={1}
               value={expense.amount}
               onChange={handleExpenseChange}
@@ -256,12 +265,16 @@ export default function Modal() {
               {categories
                 ?.filter((c) => c.isExpense)
                 ?.map((e) => (
-                  <option onClick={() => setExpense(prev => (
-                    {
-                      ...prev,
-                      category: e._id
+                  <option
+                    onClick={() =>
+                      setExpense((prev) => ({
+                        ...prev,
+                        category: e._id,
+                      }))
                     }
-                  ))} key={e._id} value={e._id}>
+                    key={e._id}
+                    value={e._id}
+                  >
                     {e.name}
                   </option>
                 ))}
@@ -296,6 +309,8 @@ export default function Modal() {
               type="text"
               name="name"
               id="name"
+              min={1}
+              step={0.01}
               value={income.name}
               onChange={handleIncomeChange}
               className="input input-bordered w-full mt-1"
@@ -311,6 +326,7 @@ export default function Modal() {
               name="amount"
               id="amount"
               min={1}
+              step={0.01}
               value={income.amount}
               onChange={handleIncomeChange}
               className="input input-bordered w-full mt-1"
@@ -336,7 +352,7 @@ export default function Modal() {
             </label>
             <select
               className="select select-bordered w-full mt-2"
-              value={categoryInput} 
+              value={categoryInput}
               onChange={(e) => {
                 setCategoryInput(e.target.value);
               }}
@@ -345,17 +361,20 @@ export default function Modal() {
               {categories
                 ?.filter((c) => !c.isExpense)
                 ?.map((e) => (
-                  <option onClick={() => setIncome(prev => (
-                    {
-                      ...prev,
-                      category: e._id
+                  <option
+                    onClick={() =>
+                      setIncome((prev) => ({
+                        ...prev,
+                        category: e._id,
+                      }))
                     }
-                  ))} key={e._id} value={e._id}>
+                    key={e._id}
+                    value={e._id}
+                  >
                     {e.name}
                   </option>
                 ))}
             </select>
-           
           </div>
 
           <div>
@@ -434,6 +453,8 @@ export default function Modal() {
                   type="number"
                   name="limit"
                   id="limit"
+                  min={1}
+                  step={0.01}
                   value={category.limit}
                   onChange={(e) =>
                     setCategory((prev) => ({ ...prev, limit: e.target.value }))
@@ -456,7 +477,6 @@ export default function Modal() {
     );
   };
 
-
   const renderCorrectForm = () => {
     if (open === "create-expense") {
       return <>{renderCreateExpenseForm()}</>;
@@ -473,7 +493,10 @@ export default function Modal() {
         <div className="modal-box">
           <form method="dialog">
             <button
-              onClick={() => setOpen(null)}
+              onClick={() => {
+                setCategoryInput("");
+                setOpen(null);
+              }}
               className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
             >
               ✕

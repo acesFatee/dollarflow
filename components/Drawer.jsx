@@ -6,7 +6,6 @@ import Sidebar from "./Sidebar";
 import { Context } from "@/Context/Context";
 
 export default function Drawer({ serverUser, categoriesData, children }) {
-  const {theme} = useContext(Context)
   return (
     <>
       <div className="drawer">
