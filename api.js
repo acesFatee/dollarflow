@@ -8,7 +8,7 @@ export const createExpense = async (expense) => {
   try {
     const token = await getToken();
     const response = await fetch(
-      "http://localhost:5000/api/transactions/create-expense",
+      `${process.env.NEXT_API_URL}/api/transactions/create-expense`,
       {
         method: "POST",
         headers: {
@@ -32,7 +32,7 @@ export const addIncome = async (income) => {
   try {
     const token = await getToken();
     const response = await fetch(
-      "http://localhost:5000/api/transactions/add-income",
+      `${process.env.NEXT_API_URL}/api/transactions/add-income`,
       {
         method: "POST",
         headers: {
@@ -56,7 +56,7 @@ export const createCategory = async (category) => {
   try {
     const token = await getToken();
     const response = await fetch(
-      "http://localhost:5000/api/categories/create-category",
+      `${process.env.NEXT_API_URL}/api/categories/create-category`,
       {
         method: "POST",
         headers: {
@@ -80,7 +80,7 @@ export const updateCategory = async (category) => {
   try {
     const token = await getToken();
     const response = await fetch(
-      `http://localhost:5000/api/categories/update-category/${category._id}`,
+      `${process.env.NEXT_API_URL}/api/categories/update-category/${category._id}`,
       {
         method: "PUT",
         headers: {
@@ -104,7 +104,7 @@ export const updateIncome = async (income) => {
   try {
     const token = await getToken();
     const response = await fetch(
-      `http://localhost:5000/api/transactions/update-income/${income._id}`,
+      `${process.env.NEXT_API_URL}/api/transactions/update-income/${income._id}`,
       {
         method: "PUT",
         headers: {
@@ -128,7 +128,7 @@ export const searchCategories = async (query) => {
   try {
     const token = await getToken();
     const response = await fetch(
-      `http://localhost:5000/api/categories/search?query=${query}`,
+      `${process.env.NEXT_API_URL}/api/categories/search?query=${query}`,
       {
         method: "GET",
         headers: {
@@ -150,7 +150,7 @@ export const getRecentTransactions = async () => {
   try {
     const token = await getToken();
     const response = await fetch(
-      `http://localhost:5000/api/transactions/recent`,
+      `${process.env.NEXT_API_URL}/api/transactions/recent`,
       {
         method: "GET",
         headers: {
@@ -172,7 +172,7 @@ export const getUserFromMongo = async () => {
 
   try {
     const token = await getToken();
-    const response = await fetch(`http://localhost:5000/api/users/get-user`, {
+    const response = await fetch(`${process.env.NEXT_API_URL}/api/users/get-user`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -190,7 +190,7 @@ export const getCategories = async (page, query) => {
   const { getToken } = auth();
   try {
     const token = await getToken();
-    const response = await fetch(`http://localhost:5000/api/categories?page=${page}&search=${query}`, {
+    const response = await fetch(`${process.env.NEXT_API_URL}/api/categories?page=${page}&search=${query}`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -209,7 +209,7 @@ export const getTransactions = async (page, search, category, year, month) => {
   try {
     const token = await getToken();
     const response = await fetch(
-      `http://localhost:5000/api/transactions?page=${page}&search=${search}&category=${category}&year=${year}&month=${month}`,
+      `${process.env.NEXT_API_URL}/api/transactions?page=${page}&search=${search}&category=${category}&year=${year}&month=${month}`,
       {
         method: "GET",
         headers: {
@@ -238,7 +238,7 @@ export const updateExpense = async (expense) => {
   try {
     const token = await getToken();
     const response = await fetch(
-      `http://localhost:5000/api/transactions/update-expense/${expense._id}`,
+      `${process.env.NEXT_API_URL}/api/transactions/update-expense/${expense._id}`,
       {
         method: "PUT",
         headers: {
@@ -262,7 +262,7 @@ export const deleteExpense = async (expense) => {
   try {
     const token = await getToken();
     const response = await fetch(
-      `http://localhost:5000/api/transactions/delete-expense/${expense._id}`,
+      `${process.env.NEXT_API_URL}/api/transactions/delete-expense/${expense._id}`,
       {
         method: "DELETE",
         headers: {
@@ -286,7 +286,7 @@ export const deleteIncome = async (income) => {
   try {
     const token = await getToken();
     const response = await fetch(
-      `http://localhost:5000/api/transactions/delete-income/${income._id}`,
+      `${process.env.NEXT_API_URL}/api/transactions/delete-income/${income._id}`,
       {
         method: "DELETE",
         headers: {
@@ -309,7 +309,7 @@ export const addFunds = async (amount) => {
   try {
     const token = await getToken();
     const response = await fetch(
-      "http://localhost:5000/api/users/add-funds",
+      `${process.env.NEXT_API_URL}/api/users/add-funds`,
       {
         method: "POST",
         headers: {
