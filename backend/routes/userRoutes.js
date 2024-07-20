@@ -62,7 +62,9 @@ router.post(
 
       const updatedUser = await UserModel.findByIdAndUpdate(
         req.user._id,
-        { $inc: { funds: amount } }, 
+        {
+          funds: amount
+        }, 
         { new: true } 
       );
 

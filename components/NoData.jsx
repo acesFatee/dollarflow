@@ -10,7 +10,7 @@ export default function NoData({
 }) {
   const recentTransactions = () => {
     return (
-      <div className="grid place-items-center h-56 border-2 border-dotted border-base-300 rounded-3xl p-4">
+      <div className="grid place-items-center h-56 border-2 text-sm border-dotted border-base-300 rounded-3xl p-4">
         You have no recent transactions
       </div>
     );
@@ -18,7 +18,7 @@ export default function NoData({
 
   const topCategories = () => {
     return (
-      <div className="grid place-items-center h-56 border-2 border-dotted border-base-300 rounded-3xl p-4">
+      <div className="grid place-items-center h-56 border-2 text-sm border-dotted border-base-300 rounded-3xl p-4">
         You have no expense categories
       </div>
     );
@@ -26,7 +26,7 @@ export default function NoData({
 
   const noSpendHistory = () => {
     return (
-      <div className="grid w-full h-96 place-items-center border-2 border-dotted border-base-300 rounded-3xl">
+      <div className="grid w-full h-96 text-sm place-items-center border-2 border-dotted border-base-300 rounded-3xl">
         You have no spend history
       </div>
     );

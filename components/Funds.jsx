@@ -94,7 +94,7 @@ export default function Funds() {
           </div>
         </div>
       )}
-      <button onClick={() => setOpenFundsModal(true)} className="btn btn-sm">Add Funds</button>
+      <button onClick={() => setOpenFundsModal(true)} className="btn btn-sm">Edit Funds</button>
       <hr className="my-3 border-base-300" />
 
       <div className="top-categories pt-3 text-lg">

@@ -42,6 +42,7 @@ export default function SpendHistory() {
 
   const options = {
     responsive: true,
+    maintainAspectRatio: false,
     scales: {
       x: {
         beginAtZero: true,

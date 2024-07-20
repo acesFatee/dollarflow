@@ -58,6 +58,14 @@ export default function Modal() {
   const handleSubmitExpense = async (e) => {
     e.preventDefault();
     setLoading(true);
+    if(categories?.length == 0){
+      alert("Seems like you don't have any categories. Try adding some.")
+      return;
+    }
+    if(!categoryInput){
+      alert("Please choose a category")
+      return;
+    }
     const response = await createExpense({
       name: expense.name,
       amount: expense.amount,
@@ -123,6 +131,14 @@ export default function Modal() {
   const handleSubmitIncome = async (e) => {
     e.preventDefault();
     setLoading(true);
+    if(categories?.length == 0){
+      alert("Seems like you don't have any categories. Try adding some.")
+      return;
+    }
+    if(!categoryInput){
+      alert("Please choose a category")
+      return;
+    }
     const response = await addIncome({
       name: income.name,
       amount: income.amount,
@@ -415,10 +431,10 @@ export default function Modal() {
             />
 
             <div>
-              <div className="form-control mt-3 w-72">
+              <div className="form-control mt-3 w-56">
                 <label className="label cursor-pointer">
                   <span className="label-text">
-                    Is this category for an expense
+                    Expense Category
                   </span>
                   <input
                     onChange={(e) => {

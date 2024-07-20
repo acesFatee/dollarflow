@@ -2,11 +2,11 @@
 
 import { addFunds } from "@/api";
 import { Context } from "@/Context/Context";
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 
 export default function InitialFunds() {
-  const { openFundsModal, setOpenFundsModal, setUser } = useContext(Context);
-  const [amount, setAmount] = useState(1);
+  const { openFundsModal, setOpenFundsModal, setUser, user } = useContext(Context);
+  const [amount, setAmount] = useState(user?.funds || 0);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -22,8 +22,12 @@ export default function InitialFunds() {
     }))
 
     setOpenFundsModal(false);
-    setAmount(1)
   };
+
+  useEffect(() => {
+    setAmount(user?.funds || 0)
+  }, [user])
+  
 
   return (
     <>
@@ -40,8 +44,9 @@ export default function InitialFunds() {
           </button>
           <>
             <h1 className="font-bold text-xl px-4">
-              Add Initial/Emergency Funds
+              Edit your funds
             </h1>
+            <p className="px-4 text-xs text-gray-500">It is recommended to add your current funds to start tracking your expenses effectively.</p>
             <form
               onSubmit={handleSubmit}
               className="max-w-lg mx-auto px-4 space-y-4"
@@ -70,7 +75,7 @@ export default function InitialFunds() {
                   type="submit"
                   className="btn bg-purple-300 text-black hover:bg-purple-400 w-full"
                 >
-                  Add Funds
+                  Edit Funds
                 </button>
               </div>
             </form>

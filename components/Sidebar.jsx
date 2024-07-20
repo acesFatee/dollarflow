@@ -46,8 +46,8 @@ export default function Sidebar({ serverUser, categoriesData }) {
                 className="group [&_summary::-webkit-details-marker]:visible"
                 open
               >
-                <summary className="flex cursor-pointer items-center justify-between rounded-lg px-4 py-2 hover:bg-base-300">
-                  <span className="text-sm font-medium"> Categories </span>
+                <summary className="flex cursor-pointer items-center rounded-lg px-4 py-2 hover:bg-base-300">
+                  <span className="text-sm pr-3 font-medium"> Categories </span>
 
                   <span className="shrink-0 transition duration-300 group-open:-rotate-180">
                     <svg
