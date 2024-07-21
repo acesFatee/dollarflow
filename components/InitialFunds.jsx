@@ -11,6 +11,12 @@ export default function InitialFunds() {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
+    const regex = /^\d+(\.\d{1,2})?$/;
+    if (!regex.test(amount)) {
+      alert("Please enter a valid amount with up to two decimal places.");
+      return;
+    }
+
     const response = await addFunds(amount)
     if(!response.updatedUser){
         alert(response.error)
@@ -62,6 +68,7 @@ export default function InitialFunds() {
                   type="number"
                   name="amount"
                   step={0.01}
+                  max={9999999999}
                   value={amount}
                   onChange={(e) => setAmount(e.target.value)}
                   id="amount"

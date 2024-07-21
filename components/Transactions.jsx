@@ -86,7 +86,7 @@ export default function Transactions({ transactionsServer, totalPages, category 
                               },
                             })
                           }
-                          className="w-5 h-5 hover:cursor-pointer hover:text-purple-500"
+                          className="w-5 h-5 hover:cursor-pointer hover:text-blue-500"
                           aria-hidden="true"
                           width="24"
                           height="24"
@@ -112,7 +112,7 @@ export default function Transactions({ transactionsServer, totalPages, category 
                               category: t.category._id,
                             })
                           }
-                          className="w-5 h-5 hover:cursor-pointer hover:text-purple-500"
+                          className="w-5 h-5 hover:cursor-pointer hover:text-red-500"
                           aria-hidden="true"
                           width="24"
                           height="24"

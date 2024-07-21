@@ -3,11 +3,15 @@ import Link from "next/link";
 import React, { useContext, useEffect, useState } from "react";
 
 export default function Category({ category }) {
-  const { transactions, categories, setOpenEdit, selectedYear, selectedMonth } = useContext(Context);
+  const { transactions, categories, setOpenEdit, selectedYear, selectedMonth, setOpenDelete } =
+    useContext(Context);
   const [progressValue, setProgressValue] = useState(0);
 
   useEffect(() => {
-    const historicalRecord = category.history.find(c => c.year == selectedYear && c.month == selectedMonth)?.spent || 0
+    const historicalRecord =
+      category.history.find(
+        (c) => c.year == selectedYear && c.month == selectedMonth
+      )?.spent || 0;
     const percent = (historicalRecord / category.limit) * 100;
     setProgressValue(percent);
   }, [transactions, categories, selectedYear, selectedMonth]);
@@ -23,20 +27,24 @@ export default function Category({ category }) {
   };
 
   const showAmountSpent = () => {
-    const historicalSpentAmount = category.history.find(c => c.year == selectedYear && c.month == selectedMonth)?.spent || 0
+    const historicalSpentAmount =
+      category.history.find(
+        (c) => c.year == selectedYear && c.month == selectedMonth
+      )?.spent || 0;
     return `Spent: ${historicalSpentAmount}/${category.limit}`;
   };
 
   const showAmountEarned = () => {
-    const historicalEarnedAmount = category.history.find(c => c.year == selectedYear && c.month == selectedMonth)?.earned || 0
+    const historicalEarnedAmount =
+      category.history.find(
+        (c) => c.year == selectedYear && c.month == selectedMonth
+      )?.earned || 0;
     return `${historicalEarnedAmount}`;
   };
-
+  
   return (
     <>
-      <div
-        className="card max-w-sm rounded-lg shadow-lg overflow-hidden"
-      >
+      <div className="card max-w-sm rounded-lg shadow-lg overflow-hidden">
         <div className="card-body p-4">
           <div className="card-heading flex justify-between">
             <h2 className="card-title text-xl font-semibold mb-2">
@@ -55,7 +63,7 @@ export default function Category({ category }) {
                     },
                   })
                 }
-                className="w-6 h-6 hover:text-purple-500"
+                className="w-6 h-6 hover:text-blue-500"
                 aria-hidden="true"
                 xmlns="http://www.w3.org/2000/svg"
                 width="24"
@@ -93,6 +101,27 @@ export default function Category({ category }) {
                   />
                 </svg>
               </Link>
+              {category.transactionCount ===  0 && <svg
+                className="w-5 h-5 hover:cursor-pointer hover:text-red-500"
+                onClick={() => setOpenDelete({
+                  name: category.name, 
+                  _id: category._id,
+                  transactionCount: category.transactionCount
+                })}
+                aria-hidden="true"
+                width="24"
+                height="24"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke="currentColor"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M5 7h14m-9 3v8m4-8v8M10 3h4a1 1 0 0 1 1 1v3H9V4a1 1 0 0 1 1-1ZM6 7h12v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7Z"
+                />
+              </svg>}
             </div>
           </div>
 

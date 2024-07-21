@@ -58,19 +58,19 @@ export default function Modal() {
   const handleSubmitExpense = async (e) => {
     e.preventDefault();
     setLoading(true);
-    if(categories?.length == 0){
-      alert("Seems like you don't have any categories. Try adding some.")
-      setLoading(false)
+    if (categories?.length == 0) {
+      alert("Seems like you don't have any categories. Try adding some.");
+      setLoading(false);
       return;
     }
-    if(!categoryInput){
-      alert("Please choose a category")
+    if (!categoryInput) {
+      alert("Please choose a category");
       return;
     }
     const response = await createExpense({
       name: expense.name,
       amount: expense.amount,
-      description: expense.amount,
+      description: expense.description,
       category: categoryInput,
     });
     if (response.error) {
@@ -83,6 +83,7 @@ export default function Modal() {
           c._id === response.updatedCategory._id
             ? {
                 ...c,
+                transactionCount: response.updatedCategory.transactionCount,
                 history: c.history.map((entry, index) =>
                   index === c.history.length - 1
                     ? { ...entry, spent: entry.spent + newExpense.amount }
@@ -132,13 +133,13 @@ export default function Modal() {
   const handleSubmitIncome = async (e) => {
     e.preventDefault();
     setLoading(true);
-    if(categories?.length == 0){
-      alert("Seems like you don't have any categories. Try adding some.")
-      setLoading(false)
+    if (categories?.length == 0) {
+      alert("Seems like you don't have any categories. Try adding some.");
+      setLoading(false);
       return;
     }
-    if(!categoryInput){
-      alert("Please choose a category")
+    if (!categoryInput) {
+      alert("Please choose a category");
       return;
     }
     const response = await addIncome({
@@ -164,7 +165,12 @@ export default function Modal() {
           c._id == response.updatedCategory._id
             ? {
                 ...c,
-                c: c.history[c.history.length - 1].earned + newIncome.amount,
+                transactionCount: response.updatedCategory.transactionCount,
+                history: c.history.map((entry, index) =>
+                  index === c.history.length - 1
+                    ? { ...entry, earned: entry.earned + newIncome.amount }
+                    : entry
+                )
               }
             : c
         )
@@ -249,6 +255,7 @@ export default function Modal() {
               id="amount"
               step="0.01"
               min={1}
+              pattern="^\d+(\.\d{1,2})?$"
               value={expense.amount}
               onChange={handleExpenseChange}
               className="input input-bordered w-full mt-1"
@@ -345,6 +352,7 @@ export default function Modal() {
               id="amount"
               min={1}
               step={0.01}
+              pattern="^\d+(\.\d{1,2})?$"
               value={income.amount}
               onChange={handleIncomeChange}
               className="input input-bordered w-full mt-1"
@@ -412,6 +420,10 @@ export default function Modal() {
     return (
       <>
         <h1 className="font-bold text-xl px-4">Create Category</h1>
+        <p className="px-4 text-sm text-gray-400">
+          Once a transaction has been created under this category, deletion will
+          no longer be possible.
+        </p>
         <form
           onSubmit={handleSubmitCategory}
           className="max-w-lg mx-auto p-4 space-y-4"
@@ -435,9 +447,7 @@ export default function Modal() {
             <div>
               <div className="form-control mt-3 w-56">
                 <label className="label cursor-pointer">
-                  <span className="label-text">
-                    Expense Category
-                  </span>
+                  <span className="label-text">Expense Category</span>
                   <input
                     onChange={(e) => {
                       if (e.target.checked) {
@@ -474,6 +484,7 @@ export default function Modal() {
                   min={1}
                   step={0.01}
                   value={category.limit}
+                  pattern="^\d+(\.\d{1,2})?$"
                   onChange={(e) =>
                     setCategory((prev) => ({ ...prev, limit: e.target.value }))
                   }

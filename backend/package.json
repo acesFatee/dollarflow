@@ -19,6 +19,7 @@
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "jsonwebtoken": "^9.0.2",
+    "money-math": "^2.6.2",
     "mongoose": "^8.4.0",
     "nodemon": "^3.1.1",
     "svix": "^1.24.0"

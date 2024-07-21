@@ -4,6 +4,7 @@ import { Context } from "@/Context/Context";
 import React, { useContext, useEffect, useState } from "react";
 import Loading from "./Loading";
 import NoData from "./NoData";
+import millify from "millify";
 
 export default function Funds() {
   const { user, categories, dashboardTime, setOpenFundsModal } = useContext(Context);
@@ -68,12 +69,12 @@ export default function Funds() {
         <div className="user-funds px-6 pb-6 mt-6 grid grid-cols-3 gap-8">
           <div className="current-funds text-center md:text-left">
             <h1 className="font-semibold text-sm md:text-md">Funds</h1>
-            <p className="text-lg text-green-500">${user?.funds}</p>
+            <p className="text-lg text-blue-500">${user?.funds}</p>
           </div>
 
           <div className="total-earned text-center md:text-left">
             <h2 className="font-semibold text-sm md:text-md">Earned</h2>
-            <p className="text-lg text-blue-500">
+            <p className="text-lg text-green-500">
               $
               {
                 getUserSpentAndEarned(dashboardTime.year, dashboardTime.month)

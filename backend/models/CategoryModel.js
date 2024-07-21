@@ -6,6 +6,10 @@ const categorySchema = new Schema({
       type: String,
       required: true
     },
+    transactionCount: {
+      type: Number,
+      default: 0,
+    },
     user: {
       type: Schema.Types.ObjectId,
       ref: 'User',

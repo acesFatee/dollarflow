@@ -44,10 +44,6 @@ export default function TransactionFilter({ category, forCategory }) {
     years.push(year);
   }
 
-  const showPreviousCategories = (year, month) => {
-    
-  }
-
   const fetchFilteredTransactions = async (year, month) => {
     const filteredTransactions = await getTransactions(
       1,

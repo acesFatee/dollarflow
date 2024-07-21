@@ -326,3 +326,27 @@ export const addFunds = async (amount) => {
     return error;
   }
 };
+
+export const deleteCategory = async (category) => {
+  const { getToken } = auth();
+
+  try {
+    const token = await getToken();
+    const response = await fetch(
+      `${process.env.NEXT_API_URL}/api/categories/delete-category/${category._id}`,
+      {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(category),
+      }
+    );
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
+};

@@ -99,4 +99,21 @@ router.get("/search", getUserClerkId, async (req, res) => {
   }
 });
 
+router.delete('/delete-category/:id', getUserClerkId, async (req, res) => {
+  try {
+    const checkCategory = await CategoryModel.findById(req.params.id)
+    if(!checkCategory){
+      return res.status(400).json({error: "No Category found"})
+    }
+    if(checkCategory.transactionCount > 0){
+      return res.status(400).json({error: "Category has transactions"})
+    }
+      const deletedCategory = await CategoryModel.findByIdAndDelete(req.params.id)
+      return res.status(200).json({deletedCategory})
+  } catch (error) {
+    console.log(error)
+    return res.status(500).json({error: "Internal Server Error"})
+  }
+})
+
 module.exports = router;

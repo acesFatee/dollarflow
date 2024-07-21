@@ -13,6 +13,7 @@
     "@clerk/themes": "^2.1.7",
     "chart.js": "^4.4.3",
     "daisyui": "^4.11.1",
+    "millify": "^6.1.0",
     "next": "^14.2.4",
     "react": "^18.3.1",
     "react-chartjs-2": "^5.2.0",

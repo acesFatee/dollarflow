@@ -146,6 +146,7 @@ export default function EditModal() {
                 id="amount"
                 min={1}
                 step={0.01}
+                pattern="^\d+(\.\d{1,2})?$"
                 value={income.amount}
                 onChange={(e) =>
                   setIncome((prev) => ({ ...prev, amount: e.target.value }))
@@ -272,6 +273,7 @@ export default function EditModal() {
                   id="limit"
                   min={1}
                   step={0.01}
+                  pattern="^\d+(\.\d{1,2})?$"
                   value={category.limit}
                   onChange={(e) =>
                     setCategory((prev) => ({ ...prev, limit: e.target.value }))
@@ -371,6 +373,7 @@ export default function EditModal() {
                 type="number"
                 name="amount"
                 id="amount"
+                pattern="^\d+(\.\d{1,2})?$"
                 value={expense.amount}
                 onChange={(e) =>
                   setExpense((prev) => ({ ...prev, amount: e.target.value }))

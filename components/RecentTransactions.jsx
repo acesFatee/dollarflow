@@ -39,7 +39,6 @@ export default function RecentTransactions({ recentTransactionsServer }) {
                 <th>Amount</th>
                 <th>Category</th>
                 <th>Date</th>
-                <th>Time</th>
                 <th>Actions</th>
               </tr>
             </thead>
@@ -58,12 +57,7 @@ export default function RecentTransactions({ recentTransactionsServer }) {
                       year: "numeric",
                     })}
                   </td>
-                  <td>
-                    {new Date(t?.createdAt).toLocaleString("en-US", {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
-                  </td>
+                  
                   <td>
                     <div className="icons flex space-x-3">
                       <svg
@@ -82,7 +76,7 @@ export default function RecentTransactions({ recentTransactionsServer }) {
                             },
                           })
                         }
-                        className="w-5 h-5 hover:cursor-pointer hover:text-purple-500"
+                        className="w-5 h-5 hover:cursor-pointer hover:text-blue-500"
                         aria-hidden="true"
                         width="24"
                         height="24"
@@ -108,7 +102,7 @@ export default function RecentTransactions({ recentTransactionsServer }) {
                             category: t.category._id,
                           })
                         }
-                        className="w-5 h-5 hover:cursor-pointer hover:text-purple-500"
+                        className="w-5 h-5 hover:cursor-pointer hover:text-red-500"
                         aria-hidden="true"
                         width="24"
                         height="24"
