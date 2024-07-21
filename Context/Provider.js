@@ -28,7 +28,7 @@ const Provider = ({ children }) => {
   
   useEffect(() => {
     if(theme === "dark"){
-      document.querySelector('html').setAttribute('data-theme', "dim")
+      document.querySelector('html').setAttribute('data-theme', "black")
     }else{
       document.querySelector('html').setAttribute('data-theme', "cupcake")
     }

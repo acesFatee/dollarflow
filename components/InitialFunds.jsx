@@ -13,7 +13,7 @@ export default function InitialFunds() {
 
     const response = await addFunds(amount)
     if(!response.updatedUser){
-        alert("Skill issue")
+        alert(response.error)
         return;
     }
     setUser(prev => ({
@@ -46,7 +46,7 @@ export default function InitialFunds() {
             <h1 className="font-bold text-xl px-4">
               Edit your funds
             </h1>
-            <p className="px-4 text-xs text-gray-500">It is recommended to add your current funds to start tracking your expenses effectively.</p>
+            <p className="px-4 text-sm text-gray-400">It is recommended to add your current funds to start tracking your expenses effectively.</p>
             <form
               onSubmit={handleSubmit}
               className="max-w-lg mx-auto px-4 space-y-4"

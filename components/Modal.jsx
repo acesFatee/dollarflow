@@ -60,6 +60,7 @@ export default function Modal() {
     setLoading(true);
     if(categories?.length == 0){
       alert("Seems like you don't have any categories. Try adding some.")
+      setLoading(false)
       return;
     }
     if(!categoryInput){
@@ -133,6 +134,7 @@ export default function Modal() {
     setLoading(true);
     if(categories?.length == 0){
       alert("Seems like you don't have any categories. Try adding some.")
+      setLoading(false)
       return;
     }
     if(!categoryInput){

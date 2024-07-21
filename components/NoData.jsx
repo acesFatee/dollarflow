@@ -26,7 +26,7 @@ export default function NoData({
 
   const noSpendHistory = () => {
     return (
-      <div className="grid w-full h-96 text-sm place-items-center border-2 border-dotted border-base-300 rounded-3xl">
+      <div className="grid w-full h-96 lg:h-[26rem] text-sm place-items-center border-2 border-dotted border-base-300 rounded-3xl">
         You have no spend history
       </div>
     );
@@ -37,7 +37,7 @@ export default function NoData({
       <div className="grid place-items-center">
         <div className="p-6 w-full text-center">
           <div className="text-lg my-4 grid place-items-center">
-            <Image width={100} height={100} src={"/no-data.png"} />
+            <Image width={100} height={100} src={"/not-found.svg"} />
           </div>
           <h2 className="text-2xl font-bold mb-2">No Transactions Found</h2>
         </div>
@@ -50,7 +50,7 @@ export default function NoData({
       <div className="grid place-items-center">
         <div className="p-6 w-full text-center">
           <div className="text-lg my-4 grid place-items-center">
-            <Image width={100} height={100} src={"/no-data.png"} />
+            <Image width={100} height={100} src={"/not-found.svg"} />
           </div>
           <h2 className="text-2xl font-bold mb-2">No Categories Found</h2>
         </div>

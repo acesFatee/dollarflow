@@ -55,10 +55,17 @@ router.post(
   getUserClerkId,
   async (req, res) => {
     try {
-      const amount = parseInt(req.body.amount);
+      let amount = parseFloat(req.body.amount);
+      const strAmount = amount.toString().split('.')
+      
       if (isNaN(amount)) {
         return res.status(400).json({ error: "Invalid amount" });
       }
+
+      else if(strAmount.pop().length > 2){
+        return res.status(400).json({ error: "Keep the amount 2 decimal places long" });
+      }
+      
 
       const updatedUser = await UserModel.findByIdAndUpdate(
         req.user._id,

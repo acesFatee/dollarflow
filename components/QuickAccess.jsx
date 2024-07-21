@@ -14,6 +14,19 @@ export default function QuickAccess({ serverUser }) {
   return (
     <>
       <div className="quick-buttons grid grid-cols-4 gap-4">
+      <button
+        data-tip = {"Create Category"}
+          onClick={() => setOpen("create-category")}
+          className="btn flex tooltip tooltip-bottom items-center justify-center bg-base-200 rounded-md shadow-sm px-4 py-2 space-x-2"
+        >
+          <Image
+            height={20}
+            width={20}
+            src="/category.png"
+            alt="Create Category"
+          />
+          <span className="hidden lg:block">Create Category</span>
+        </button>
         <button
         data-tip = {"Create Expense"}
           onClick={() => setOpen("create-expense")}
@@ -36,19 +49,7 @@ export default function QuickAccess({ serverUser }) {
           <span className="hidden lg:block">Add Income</span>
         </button>
 
-        <button
-        data-tip = {"Create Category"}
-          onClick={() => setOpen("create-category")}
-          className="btn flex tooltip tooltip-bottom items-center justify-center bg-base-200 rounded-md shadow-sm px-4 py-2 space-x-2"
-        >
-          <Image
-            height={20}
-            width={20}
-            src="/category.png"
-            alt="Create Category"
-          />
-          <span className="hidden lg:block">Create Category</span>
-        </button>
+        
 
         {theme === "dark" && (
           <button

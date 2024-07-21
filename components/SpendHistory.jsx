@@ -63,7 +63,7 @@ export default function SpendHistory() {
   }
 
   return (
-    <div className="w-full h-full">
+    <div className="w-full h-96">
       <div className="flex justify-center h-[21rem] mt-6">
         {expenseCategories.length > 0 ? (
           <Bar data={data} options={options} />
