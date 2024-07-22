@@ -1,12 +1,16 @@
 "use client";
 
 import { Context } from "@/Context/Context";
-import { SignInButton, SignUpButton } from "@clerk/nextjs";
+import {
+  ClerkLoaded,
+  ClerkLoading,
+  SignInButton,
+  SignUpButton,
+} from "@clerk/nextjs";
 import React, { useContext } from "react";
 
 export default function Hero() {
   const { theme, setTheme } = useContext(Context);
-
   const changeTheme = () => {
     if (theme === "light") {
       setTheme("dark");
@@ -49,11 +53,6 @@ export default function Hero() {
                     </svg>
                   </label>
                 </li>
-                <li>
-                  <a className="btn bg-purple-300 hover:bg-purple-400 text-black bt btn-ghost">
-                    <SignInButton mode="modal" />
-                  </a>
-                </li>
               </ul>
             </div>
           </div>
@@ -72,12 +71,16 @@ export default function Hero() {
               authentication ensures your data is always safe.
             </p>
             <div className="flex justify-center">
-              <button className="btn text-gray-800 bg-purple-300 hover:bg-purple-400">
-                <SignUpButton />
-              </button>
-              <button className="btn text-gray-800 ml-4 bg-purple-300 hover:bg-purple-400">
-                <SignInButton />
-              </button>
+              <ClerkLoading>
+                <button className="btn text-gray-800 bg-purple-300 hover:bg-purple-400">
+                  Get Started
+                </button>
+              </ClerkLoading>
+              <ClerkLoaded>
+                <button className="btn text-gray-800 bg-purple-300 hover:bg-purple-400">
+                  <SignUpButton mode="modal">Get Started</SignUpButton>
+                </button>
+              </ClerkLoaded>
             </div>
           </div>
           <div className="lg:max-w-lg grid place-items-center lg:w-full md:w-1/2 w-5/6">
