@@ -17,7 +17,7 @@ const Provider = ({ children }) => {
   const [categoriesDropdown, setCategoriesDropdown] = useState([])
   const [categories, setCategories] = useState([])
   const [categorySearch, setCategorySearch] = useState("")
-  const [theme, setTheme] = useState("light")
+  const [theme, setTheme] = useState("dark")
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
   const [dashboardTime, setDashboardTime] = useState({

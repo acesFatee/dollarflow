@@ -447,7 +447,7 @@ export default function Modal() {
             <div>
               <div className="form-control mt-3 w-56">
                 <label className="label cursor-pointer">
-                  <span className="label-text">Expense Category</span>
+                  <span className="label-text">Is this Category for an <strong>Expense</strong> ?</span>
                   <input
                     onChange={(e) => {
                       if (e.target.checked) {
@@ -463,7 +463,7 @@ export default function Modal() {
                       }
                     }}
                     type="checkbox"
-                    className="toggle bg-purple-300"
+                    className="checkbox"
                   />
                 </label>
               </div>
