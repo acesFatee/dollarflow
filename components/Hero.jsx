@@ -78,7 +78,7 @@ export default function Hero() {
               </ClerkLoading>
               <ClerkLoaded>
                 <button className="btn text-gray-800 bg-purple-300 hover:bg-purple-400">
-                  <SignUpButton mode="modal">Get Started</SignUpButton>
+                  <SignInButton mode="modal">Get Started</SignInButton>
                 </button>
               </ClerkLoaded>
             </div>
