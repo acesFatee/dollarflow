@@ -19,6 +19,10 @@ app.use(express.urlencoded({ extended: true }));
 
 connectToMongo();
 
+app.get('/', (req, res) => {
+  return res.status(200).json("DollarFlow API - Expense Tracking App API")
+})
+
 app.use("/api/users", userRoutes);
 app.use("/api/transactions", ClerkExpressRequireAuth({}), transactionRoutes);
 app.use("/api/categories", ClerkExpressRequireAuth({}), categoryRoutes);
