@@ -46,7 +46,7 @@ router.post("/create-category", getUserClerkId, async (req, res) => {
     const newCategory = await CategoryModel.create({
       name,
       user: req.user._id,
-      isExpense,
+      isExpense: isExpense || false,
       limit,
       history: {
         year: currentYear,

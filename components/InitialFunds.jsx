@@ -7,19 +7,26 @@ import React, { useContext, useEffect, useState } from "react";
 export default function InitialFunds() {
   const { openFundsModal, setOpenFundsModal, setUser, user } = useContext(Context);
   const [amount, setAmount] = useState(user?.funds || 0);
+  const [loading, setLoading] = useState(false)
 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
+    if(loading){
+      return;
+    }
+    setLoading(true)
     const regex = /^\d+(\.\d{1,2})?$/;
     if (!regex.test(amount)) {
       alert("Please enter a valid amount with up to two decimal places.");
+      setLoading(false)
       return;
     }
 
     const response = await addFunds(amount)
     if(!response.updatedUser){
         alert(response.error)
+        setLoading(false)
         return;
     }
     setUser(prev => ({
@@ -28,6 +35,7 @@ export default function InitialFunds() {
     }))
 
     setOpenFundsModal(false);
+    setLoading(false)
   };
 
   useEffect(() => {
@@ -82,7 +90,7 @@ export default function InitialFunds() {
                   type="submit"
                   className="btn bg-purple-300 text-black hover:bg-purple-400 w-full"
                 >
-                  Edit Funds
+                  {loading ? "Editing Funds" : "Edit Funds"}
                 </button>
               </div>
             </form>
@@ -92,3 +100,4 @@ export default function InitialFunds() {
     </>
   );
 }
+  

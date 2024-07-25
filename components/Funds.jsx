@@ -69,12 +69,12 @@ export default function Funds() {
         <div className="user-funds px-6 pb-6 mt-6 grid grid-cols-3 gap-8">
           <div className="current-funds text-center md:text-left">
             <h1 className="font-semibold text-sm md:text-md">Funds</h1>
-            <p className="text-lg text-blue-500">${user?.funds}</p>
+            <p className="text-md text-blue-500">${user?.funds}</p>
           </div>
 
           <div className="total-earned text-center md:text-left">
             <h2 className="font-semibold text-sm md:text-md">Earned</h2>
-            <p className="text-lg text-green-500">
+            <p className="text-md text-green-500">
               $
               {
                 getUserSpentAndEarned(dashboardTime.year, dashboardTime.month)
@@ -85,7 +85,7 @@ export default function Funds() {
 
           <div className="total-spent text-center md:text-left">
             <h2 className="font-semibold text-sm md:text-md">Spent</h2>
-            <p className="text-lg text-red-500">
+            <p className="text-md text-red-500">
               $
               {
                 getUserSpentAndEarned(dashboardTime.year, dashboardTime.month)
@@ -105,14 +105,14 @@ export default function Funds() {
         ) : topSpentCategories?.length === 0 ? (
           <NoData forTopCategories={true} />
         ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 text-md gap-6">
             {topSpentCategories.map((category, index) => (
               <div key={index} className="category-item p-4 rounded-lg">
                 <h3 className="font-semibold text-sm md:text-md">
                   {category.name}
                 </h3>
                 <p
-                  className={`text-lg ${percentSpentOnCategory(
+                  className={`${percentSpentOnCategory(
                     getHistoricalRecord(category.history),
                     category.limit
                   )}`}

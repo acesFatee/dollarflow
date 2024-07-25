@@ -57,6 +57,9 @@ export default function Modal() {
 
   const handleSubmitExpense = async (e) => {
     e.preventDefault();
+    if(loading){
+      return;
+    }
     setLoading(true);
     if (categories?.length == 0) {
       alert("Seems like you don't have any categories. Try adding some.");
@@ -132,6 +135,9 @@ export default function Modal() {
 
   const handleSubmitIncome = async (e) => {
     e.preventDefault();
+    if(loading){
+      return;
+    }
     setLoading(true);
     if (categories?.length == 0) {
       alert("Seems like you don't have any categories. Try adding some.");
@@ -207,6 +213,9 @@ export default function Modal() {
 
   const handleSubmitCategory = async (e) => {
     e.preventDefault();
+    if(loading){
+      return;
+    }
     setLoading(true);
     const newCategory = await createCategory(category);
     if (newCategory.error) {
@@ -498,7 +507,7 @@ export default function Modal() {
               type="submit"
               className="btn bg-purple-300 text-black hover:bg-purple-400 w-full"
             >
-              Create Category
+              {loading ? "Creating Category" : "Create Category"}
             </button>
           </div>
         </form>

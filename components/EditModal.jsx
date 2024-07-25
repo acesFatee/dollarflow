@@ -18,6 +18,7 @@ export default function EditModal() {
     name: "",
     limit: "",
   });
+  const [loading, setLoading] = useState(false)
   const [categoryName, setCategoryName] = useState("");
   const [income, setIncome] = useState({
     _id: "",
@@ -68,9 +69,14 @@ export default function EditModal() {
 
   const handleEditIncome = async (e) => {
     e.preventDefault();
+    if(loading){
+      return;
+    }
+    setLoading(true)
     const response = await updateIncome(income);
     if (response.error) {
       alert(JSON.stringify(response.error));
+      setLoading(false)
     } else {
       const updatedRecentTransactions = recentTransactions?.map((t) =>
         t._id == response.newIncome._id ? response.newIncome : t
@@ -103,6 +109,7 @@ export default function EditModal() {
           return newCategories;
         });
       }
+      setLoading(false)
     }
   };
 
@@ -212,7 +219,7 @@ export default function EditModal() {
               type="submit"
               className="btn bg-purple-300 text-black hover:bg-purple-400 w-full"
             >
-              Edit Income
+              {loading ? "Editing income" : "Edit income"}
             </button>
           </div>
         </form>
@@ -222,15 +229,21 @@ export default function EditModal() {
 
   const handleEditCategory = async (e) => {
     e.preventDefault();
+    if(loading){
+      return;
+    }
+    setLoading(true)
     const response = await updateCategory(category);
     if (response.error) {
       alert(JSON.stringify(response.error));
+      setLoading(false)
     } else {
       const updatedCategories = categories?.map((c) =>
         c._id == response.category._id ? response.category : c
       );
       setCategories(updatedCategories);
       setOpenEdit(null);
+      setLoading(false)
     }
   };
 
@@ -288,7 +301,7 @@ export default function EditModal() {
               type="submit"
               className="btn bg-purple-300 text-black hover:bg-purple-400 w-full"
             >
-              Edit Category
+              {loading ? "Editing category" : "Edit Category"}
             </button>
           </div>
         </form>
@@ -298,9 +311,14 @@ export default function EditModal() {
 
   const handleEditExpense = async (e) => {
     e.preventDefault();
+    if(loading){
+      return;
+    }
+    setLoading(true)
     const response = await updateExpense(expense);
     if (response.error) {
       alert(JSON.stringify(response.error));
+      setLoading(false)
     } else {
       const updatedRecentTransactions = recentTransactions?.map((t) =>
         t._id == response.newExpense._id ? response.newExpense : t
@@ -333,6 +351,8 @@ export default function EditModal() {
           });
           return newCategories;
         });
+
+        setLoading(false)
       }
     }
   };
@@ -439,7 +459,7 @@ export default function EditModal() {
               type="submit"
               className="btn bg-purple-300 text-black hover:bg-purple-400 w-full"
             >
-              Edit Expense
+              {loading ? "Editing expense" : "Edit expense"}
             </button>
           </div>
         </form>

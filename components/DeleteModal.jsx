@@ -3,15 +3,25 @@
 import { Context } from "@/Context/Context";
 import { deleteCategory, deleteExpense, deleteIncome } from "@/api";
 import { useRouter } from "next/navigation";
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 
 export default function DeleteModal() {
   const { openDelete, setOpenDelete, setCategories, setUser, categories } =
     useContext(Context);
   const router = useRouter();
+  const [loading, setLoading] = useState(false)
 
   const handleDeleteIncome = async () => {
+    if(loading){
+      return;
+    }
+    setLoading(true)
     const response = await deleteIncome(openDelete);
+    if(response.error){
+      alert(response.error)
+      setLoading(false)
+      return;
+    }
     setCategories(() => {
       const updated = categories?.map((c) =>
         c._id == response.updatedCategory._id ? response.updatedCategory : c
@@ -24,11 +34,21 @@ export default function DeleteModal() {
       earned: response.updatedUser.earned,
     }));
     setOpenDelete(null);
+    setLoading(false)
     router.refresh();
   };
 
   const handleDeleteExpense = async () => {
+    if(loading){
+      return
+    }
+    setLoading(true)
     const response = await deleteExpense(openDelete);
+    if(response.error){
+      alert(response.error)
+      setLoading(false)
+      return;
+    }
     setCategories(() => {
       const updated = categories?.map((c) =>
         c._id == response.updatedCategory._id ? response.updatedCategory : c
@@ -41,12 +61,21 @@ export default function DeleteModal() {
       spent: response.updatedUser.spent,
     }));
     setOpenDelete(null);
+    setLoading(false)
     router.refresh();
   };
 
   const handleDeleteCategory = async () => {
+    if(loading){
+      return
+    }
+    setLoading(true)
     const response = await deleteCategory(openDelete);
-
+    if(response.error){
+      alert(response.error)
+      setLoading(false)
+      return;
+    }
     setCategories((prevCategories) => {
       const updated = prevCategories?.filter(
         (c) => c._id !== response.deletedCategory._id
@@ -55,6 +84,7 @@ export default function DeleteModal() {
     });
 
     setOpenDelete(null);
+    setLoading(false)
     router.refresh();
   };
 
