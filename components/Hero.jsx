@@ -61,7 +61,7 @@ export default function Hero() {
       <section className="body-font">
         <div className="container mx-auto flex px-5 py-24 md:flex-row flex-col items-center">
           <div className="lg:flex-grow md:w-1/2 lg:pr-24 md:pr-16 flex flex-col md:items-start md:text-left mb-16 md:mb-0 items-center text-center">
-            <h1 className="title-font sm:text-4xl text-3xl mb-4 font-medium">
+            <h1 className="title-font sm:text-5xl font-bold text-3xl mb-4">
               Welcome to DollarFlow
             </h1>
             <p className="mb-8 leading-relaxed">
@@ -78,7 +78,7 @@ export default function Hero() {
               </ClerkLoading>
               <ClerkLoaded>
                 <button className="btn text-gray-800 bg-purple-300 hover:bg-purple-400">
-                  <SignInButton mode="modal">Get Started</SignInButton>
+                  <SignUpButton mode="modal">Get Started</SignUpButton>
                 </button>
               </ClerkLoaded>
             </div>
@@ -176,11 +176,10 @@ export default function Hero() {
               </div>
               <div className="flex-grow">
                 <h2 className="text-lg title-font font-bold mb-3">
-                  Monthly Reports
+                  Monthly History
                 </h2>
                 <p className="leading-relaxed text-base">
-                  Generate detailed monthly reports to analyze your spending
-                  patterns and make informed financial decisions.
+                  Keep a track of your monthly expenditure and visualize them using graphs
                 </p>
               </div>
             </div>
