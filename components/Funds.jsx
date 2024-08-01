@@ -4,7 +4,6 @@ import { Context } from "@/Context/Context";
 import React, { useContext, useEffect, useState } from "react";
 import Loading from "./Loading";
 import NoData from "./NoData";
-import millify from "millify";
 
 export default function Funds() {
   const { user, categories, dashboardTime, setOpenFundsModal } = useContext(Context);
@@ -22,22 +21,26 @@ export default function Funds() {
     if (categories) {
       const sortedCategories = categories
         .filter((category) => category.isExpense)
-        .sort(
-          (a, b) =>
-            b.history.find(
-              (e) =>
-                e.year == dashboardTime.year && e.month == dashboardTime.month
-            ).spent -
-            a.history.find(
-              (e) =>
-                e.year == dashboardTime.year && e.month == dashboardTime.month
-            ).spent
-        )
+        .sort((a, b) => {
+          const bHistoryEntry = b.history.find(
+            (e) => e.year == dashboardTime.year && e.month == dashboardTime.month
+          );
+          const aHistoryEntry = a.history.find(
+            (e) => e.year == dashboardTime.year && e.month == dashboardTime.month
+          );
+    
+          // Check if both history entries and their spent properties exist
+          const bSpent = bHistoryEntry?.spent ?? 0;
+          const aSpent = aHistoryEntry?.spent ?? 0;
+    
+          return bSpent - aSpent;
+        })
         .slice(0, 3);
-
+    
       setTopSpentCategories(sortedCategories);
       setLoading(false);
     }
+    
   }, [categories]);
 
   const percentSpentOnCategory = (amount, limit) => {
